@@ -36,7 +36,7 @@ Your code should does the following
 
 + Read and parse the configuration file
 
-  # You first need to import the configuration class
+	# You first need to import the configuration class
 	from irlib.configuration import Configuration 
 
 	# Then you load configuration
@@ -46,12 +46,12 @@ Your code should does the following
  
 + Initiate the preprocessors
 
-	# You first need to import the configuration class
+	''' You first need to import the configuration class '''
 	from irlib.preprocessor import Preprocessor
 
-	# Then you create a new preprocessor object
-	#prep = Preprocessor(pattern='\W+', lower=True, stem=False, pos=False, ngram=2)
-	# However, you normally get the values from the confiuration
+	''' Then you create a new preprocessor object
+		prep = Preprocessor(pattern='\W+', lower=True, stem=False, pos=False, ngram=2)
+		However, you normally get the values from the confiuration '''
 	config_data = config.get_configuration()
 	prep = Preprocessor(pattern='\W+', lower=config_data['lower'], stem=config_data['stem'], 
 						pos=config_data['pos'], config_data['ngram'])
