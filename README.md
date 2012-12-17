@@ -1,4 +1,4 @@
-# Deceptive Spam Classifier #
+# Information Retrieval Library #
 
 Writing this library was part of my Information Retrieval assignment in University of East Anglia.
 It was mainly meant to detect Review Spam (Machine Learning - Classification).
