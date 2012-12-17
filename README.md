@@ -1,14 +1,16 @@
 # Deceptive Spam Classifier #
 
-Although, the main purpose of this classifier is to detect deceptive review spam,
-I tried to make the code as generic as possible to be used for other classification problems.
+Writing this library was part of my Information Retrieval assignment in University of East Anglia.
+It was mainly meant to detect Review Spam (Machine Learning - Classification).
+However, I tried to make the code as generic as possible to be used for other classification problems.
+I also added some other IR functions such as tokenizing, n-grams, stemming and part of speech tagging 
 
 ## Installation ##
 
-You need to have Python installed on your computer.
+You sure need to have Python installed on your computer.
 
 Another *optional* module might be needed, [NLTK](http://nltk.org/) 
-This is only needed in case of stemming and part of speech tagging 
+This is only needed in case of stemming and PoS (part of speech) tagging 
 
 ## Code Organization ##
 
