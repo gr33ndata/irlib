@@ -8,7 +8,7 @@ Installation
 
 You sure need to have Python installed on your computer.
 
-Another **optional** module might be needed, `NLTK<(http://nltk.org/>`_ 
+Another **optional** module might be needed, `NLTK <http://nltk.org/>`_ 
 This is only needed in case of stemming and PoS (part of speech) tagging 
 
 Code Organization
