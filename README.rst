@@ -1,18 +1,18 @@
-# Information Retrieval Library #
+Information Retrieval Library 
+=============================
 
-Writing this library was part of my Information Retrieval assignment in University of East Anglia.
-It was mainly meant to detect Review Spam (Machine Learning - Classification).
-However, I tried to make the code as generic as possible to be used for other classification problems.
-I also added some other IR functions such as tokenizing, n-grams, stemming and part of speech tagging 
+Writing this library was part of my Information Retrieval assignment in University of East Anglia. It was mainly meant to detect Review Spam (Machine Learning - Classification). However, I tried to make the code as generic as possible to be used for other classification problems. I also added some other IR functions such as tokenizing, n-grams, stemming and part of speech tagging 
 
-## Installation ##
+Installation
+-------------
 
 You sure need to have Python installed on your computer.
 
 Another *optional* module might be needed, [NLTK](http://nltk.org/) 
 This is only needed in case of stemming and PoS (part of speech) tagging 
 
-## Code Organization ##
+Code Organization
+-----------------
 
 First of all, the code is divided into 3 main components:
 
@@ -32,19 +32,20 @@ One more class here is 'Evaluation', which is used to calculate accuracy during 
 preprocessor.py is the module where files parsing tokenizing, stemming and PoS tagging are implemented
 If we have time to add feature selection (such as Mutual Information Gain), it should be implemented here.
  
-## How to use ##
+How to use
+----------
 
 Your code should does the following
 
 + Read and parse the configuration file
 
-	> You first need to import the configuration class
+	# You first need to import the configuration class
 
 	from irlib.configuration import Configuration 
 
-	> Then you load configuration
+	# Then you load configuration
 
-	> Sample configuration file in the root directory: sample.conf
+	# Sample configuration file in the root directory: sample.conf
 
 	config = Configuration(config_file='your_file.conf')
 
@@ -52,7 +53,7 @@ Your code should does the following
  
 + Initiate the preprocessors
 
-	> You first need to import the configuration class
+	# You first need to import the configuration class
 
 	from irlib.preprocessor import Preprocessor
 
@@ -152,7 +153,8 @@ Your code should does the following
 
 + If we are doing cross checking here, the previous 4 steps are repeated for all folds 
 
-## Contacts ##
+Contacts
+--------
  
 + Name: Tarek Amr 
 + Twitter: @gr33ndata
