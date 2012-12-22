@@ -9,11 +9,11 @@ Things to be done
     since this is an IR Library.
 
     * Vector Space will look like scikit's dataset. [see above]
-    * Function to TF/IDF each row, or the whole document.
+    * Function to convert ot TF and/or IDF each document, or all.
     * Let's offer a way to serialize new queries, 
       however, no need to put queries in a Vector Space as we do now.
 
-#.  We need add pruning and MI again to our code
+#.  We need add pruning and MI (Mutual Information) again to our code
 
 #.  We need to add basic TF-IDF search capabilities to our Vecotr Space.
     Both Euclidean and Cosine distances should be added here.
