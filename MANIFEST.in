@@ -1,2 +1,2 @@
-include *.txt
-recursive-include docs *.txt
+include *.txt *.rst *.py
+recursive-include pyuptodate *.py
