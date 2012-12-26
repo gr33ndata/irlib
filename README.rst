@@ -37,7 +37,7 @@ How to use
 
 Your code should does the following
 
-* Read and parse the configuration file::
+* Reading and parseing the configuration file::
 
 	# You first need to import the configuration class
 	from irlib.configuration import Configuration 
