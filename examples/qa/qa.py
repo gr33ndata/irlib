@@ -1,4 +1,5 @@
-# Search in tweets
+# Using IR to answer your question
+# Not so smart question and answer system
 
 import os, sys
 import random
