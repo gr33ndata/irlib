@@ -16,11 +16,16 @@ Code Organization
 
 First of all, the code is divided into 3 main components:
 
+#. matrix.py
+#. metrics.py
 #. classifier.py
-#. configuration.py
 #. preprocessor.py
+#. configuration.py
+#. superlist.py
 
-classifier.py is the main module where the following classifiers are implemented:
+matrix.py: The documents (vecotor space) index is implemented here.
+metrics.py: The different distance measures are implemented here
+classifier.py: The following classifiers are implemented here:
 
 * Rocchio: Rocchio Classifier 
 * KNN: k-NN Classifier
