@@ -1,7 +1,7 @@
 Information Retrieval Library 
 =============================
 
-Writing this library was part of my Information Retrieval assignment in University of East Anglia. It was mainly meant to detect Review Spam (Machine Learning - Classification). However, I tried to make the code as generic as possible to be used for other classification problems. I also added some other IR functions such as tokenizing, n-grams, stemming and part of speech tagging 
+Writing this library was part of my Information Retrieval assignment in University of `East Anglia <http://www.uea.ac.uk/study/postgraduate/taught-degree/detail/msc-knowledge-discovery-and-datamining>`. It was mainly meant to detect Review Spam (Machine Learning - Classification). However, I tried to make the code as generic as possible to be used for other classification problems. I also added some other IR functions such as tokenizing, n-grams, stemming and part of speech tagging 
 
 Installation
 -------------
