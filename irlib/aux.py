@@ -1,3 +1,6 @@
+# Currently being used by classifier
+# Should be replaced with superlist.py soon
+
 class SuperList(list):
 	''' 
 	SuperList: An alternatice to Python's default lists (arrays)
