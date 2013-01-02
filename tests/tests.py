@@ -6,6 +6,7 @@ import unittest
 sys.path.append('../')
 from irlib.superlist import SuperList
 from irlib.matrix import Matrix
+from irlib.metrics import Metrics
  
 class TestSuperList(unittest.TestCase):
 
@@ -34,6 +35,19 @@ class TestSuperList(unittest.TestCase):
         self.assertEqual(self.x[7],99)
         self.x.increment_after_padding(1,99)
         self.assertEqual(self.x[1],100)
+
+class TestMetrics(unittest.TestCase):
+
+    def setUp(self):
+        self.m = Metrics()
+
+    def test_metrics(self):
+        e = self.m.euclid_vectors([1,1],[4,5])
+        self.assertEqual(e,5)
+        c = self.m.cos_vectors([1,1,1],[1,1,1])
+        self.assertEqual(round(c,5),float(1))
+        c = self.m.cos_vectors([1,0,1],[0,1,0])
+        self.assertEqual(round(c,5),float(0))
 
 class TestMatrix(unittest.TestCase):
 
