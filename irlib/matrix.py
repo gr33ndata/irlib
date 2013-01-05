@@ -14,6 +14,27 @@ class Matrix:
         self.terms = SuperList()
         self.docs = []
 
+    def __len__(self):
+        'Returns number of loaded ducuments'
+        return len(self.docs)
+
+    def __str__(self):
+        s  = 'Matrix:'
+        s += '\n * Terms read: %d' % len(self.terms)
+        s += '\n * Documents read: %d' % len(self.docs)
+        return s
+
+    def __contains__(self, term):
+        'Checks if certain terms is loaded'
+        return self.terms.__contains__(term)        
+
+    def __getitem__(self, term):
+        'Returns occurences of term in all documents'
+        if not term in self:
+            return []
+        return [doc['terms'][self.terms.index(term)] for doc in self.docs]
+
+    
     def do_padding(self):
         ''' Align the length of all rows in matrix
             Each time we see a new term, list of terms is expanded,

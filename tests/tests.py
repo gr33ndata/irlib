@@ -56,6 +56,7 @@ class TestMatrix(unittest.TestCase):
 
     def test_add_doc(self):
         # Try without frequency
+        self.assertEqual(len(self.m),0)
         doc1_terms = ['buy', 'now', 'or', 'buy', 'later']
         self.m.add_doc( doc_id = 'file_spam.txt', 
                         doc_class='Spam', 
@@ -79,6 +80,9 @@ class TestMatrix(unittest.TestCase):
                         frequency=True,
                         do_padding=True)
         self.assertEqual(len(self.m.terms), len(self.m.docs[0]['terms']))     
+        self.assertEqual(len(self.m),3)
+        self.assertEqual('buy' in self.m, True)
+        self.assertEqual('shpping' in self.m, False)
 
 if __name__ == '__main__':
     unittest.main()
