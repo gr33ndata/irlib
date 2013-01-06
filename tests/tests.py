@@ -1,4 +1,4 @@
-#!python
+#!/usr/bin/env python
 
 import sys
 import unittest
@@ -75,7 +75,7 @@ class TestMatrix(unittest.TestCase):
         # Now let's see if padding is working
         doc2_terms = ['buy', 'now']
         self.m.add_doc( doc_id = 'file_spam.txt', 
-                        doc_class='Spam', 
+                        doc_class='Ham', 
                         doc_terms= doc2_terms,
                         frequency=True,
                         do_padding=True)
@@ -83,6 +83,8 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(len(self.m),3)
         self.assertEqual('buy' in self.m, True)
         self.assertEqual('shpping' in self.m, False)
+        self.assertEqual(self.m.classes, ['Spam', 'Ham'])
+
 
 if __name__ == '__main__':
     unittest.main()

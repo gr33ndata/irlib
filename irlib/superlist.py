@@ -11,11 +11,16 @@ class SuperList(list):
         So that we can add some helper methods and functionalities.
     '''
 
+    def nonzero_count(self):
+        ''' Returns number of non-zero items in list
+        '''
+        return sum([1 for item in self if item > 0])
+
     def unique_append(self, item):
         ''' Only append item to list if not already there, 
             In case we want our list to act like a set.
             Returns the index of the the added item'''
-        if self.__contains__(item):
+        if item in self:
             return self.index(item)
         else:
             self.append(item)
@@ -36,7 +41,7 @@ class SuperList(list):
             if there is existing item at index, it is overwritten.  
 		'''
 		self.expand(new_len=index+1, padding_data=padding_data)
-		self[index] = item
+		self[index] = float(item)
 
     def increment_after_padding(self, index, item, padding_data=float(0)):
 		''' Just like insert_after_padding().  
