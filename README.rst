@@ -1,7 +1,7 @@
 Information Retrieval Library 
 =============================
 
-I started writing this library as part of my `Information Retrieval and Natural Language Processing (IR and NLP) <http://www.uea.ac.uk/study/module/mod-detail/CMPSMB29>`_ module in the `University of East Anglia <http://www.uea.ac.uk/>`_. It was mainly meant to detect Review Spam (Machine Learning - Classification). However, It has more functionalities such as Vector Space model, as well as some other IR functions such as tokenizing, n-grams, stemming and PoS (Part of Speech) tagging.
+I started writing this library as part of my `Information Retrieval and Natural Language Processing (IR and NLP) <http://www.uea.ac.uk/study/module/mod-detail/CMPSMB29>`_ module in the `University of East Anglia <http://www.uea.ac.uk/>`_. It was mainly meant to detect Review Spam (Machine Learning - Classification). However, It has more functionalities such as `Vector Space Model (VSM) <http://en.wikipedia.org/wiki/Vector_space_model>`_, as well as some other IR functions such as tokenizing, n-grams, stemming and PoS (Part of Speech) tagging.
 
 Installation
 -------------
@@ -41,7 +41,7 @@ The above 3 classes (class as in object oriented programming not machine learnin
 One more class here is 'Evaluation', which is used to calculate accuracy during testing.
 
 preprocessor.py is the module where files parsing tokenizing, stemming and PoS tagging are implemented
-If we have time to add feature selection (such as Mutual Information Gain), it should be implemented here.
+More feature selection algorithms (such as Mutual Information Gain), should be implemented here.
  
 How to use for Vector Space IR
 -------------------------------
@@ -108,9 +108,11 @@ The add_doc() method in Matrix has two more options we skipped earlier:
     If True, then we are using a multinomial mode (You usually will need this) 
     i.e. if terms occurs n times in document, then it frequency is n.
     If False, then we are using a multivariate (Bernoulli) mode, 
-    i.e. if terms occurs in document at least one time, then it frequency is 1,
+    i.e. if terms occurs in document at least one time, then it frequency is 1        
     otherwise its frequency is zero.
-
+    As mentioned above, you will normally need the multinomial mode,
+    We just put the Bernoulli mode for the sake of `Naive Bayesian Classifier <http://scikit-learn.org/0.12/modules/naive_bayes.html>`_
+    
 * do_padding::
 
     Each time we add new document, we also see new terms, 
@@ -122,9 +124,7 @@ The add_doc() method in Matrix has two more options we skipped earlier:
 
 Wait a minute, two more notes:    
 
-* We haven't converted our VSM into tf.idf in the previous example, 
-however, you normally need to do so. So you have to call the follwing method,
-right after loading your documents and before doing searches::
+* We haven't converted our VSM into tf.idf in the previous example, however, you normally need to do so. So you have to call the follwing method, right after loading your documents and before doing searches::
 
     mx.tf_idf()
 
