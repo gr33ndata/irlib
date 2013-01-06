@@ -111,7 +111,7 @@ The add_doc() method in Matrix has two more options we skipped earlier:
     i.e. if terms occurs in document at least one time, then it frequency is 1        
     otherwise its frequency is zero.
     As mentioned above, you will normally need the multinomial mode,
-    We just put the Bernoulli mode for the sake of `Naive Bayesian Classifier <http://scikit-learn.org/0.12/modules/naive_bayes.html>`_
+    We just put the Bernoulli mode for the sake of Naive Bayesian Classifier
     
 * do_padding::
 
@@ -124,7 +124,9 @@ The add_doc() method in Matrix has two more options we skipped earlier:
 
 Wait a minute, two more notes:    
 
-* We haven't converted our VSM into tf.idf in the previous example, however, you normally need to do so. So you have to call the follwing method, right after loading your documents and before doing searches::
+* We haven't converted our VSM into tf.idf in the previous example, 
+however, you normally need to do so. So you have to call the follwing method, 
+right after loading your documents and before doing searches::
 
     mx.tf_idf()
 
