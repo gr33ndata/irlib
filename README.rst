@@ -1,7 +1,7 @@
 Information Retrieval Library 
 =============================
 
-I started writing this library as part of my `Information Retrieval and Natural Language Processing (IR and NLP) <http://www.uea.ac.uk/study/module/mod-detail/CMPSMB29>`_ module in the `University of East Anglia <http://www.uea.ac.uk/>`_. It was mainly meant to detect Review Spam (Machine Learning - Classification). However, I tried to make the code as generic as possible to be used for other classification problems. I also added some other IR functions such as tokenizing, n-grams, stemming and part of speech tagging 
+I started writing this library as part of my `Information Retrieval and Natural Language Processing (IR and NLP) <http://www.uea.ac.uk/study/module/mod-detail/CMPSMB29>`_ module in the `University of East Anglia <http://www.uea.ac.uk/>`_. It was mainly meant to detect Review Spam (Machine Learning - Classification). However, It has more functionalities such as Vector Space model, as well as some other IR functions such as tokenizing, n-grams, stemming and PoS (Part of Speech) tagging.
 
 Installation
 -------------
@@ -18,7 +18,7 @@ To install the package, write::
 Code Organization
 -----------------
 
-First of all, the code is divided into 3 main components:
+First of all, the code is divided into the following main components:
 
 #. matrix.py
 #. metrics.py
@@ -27,8 +27,10 @@ First of all, the code is divided into 3 main components:
 #. configuration.py
 #. superlist.py
 
-matrix.py: The documents (vecotor space) index is implemented here.
-metrics.py: The different distance measures are implemented here
+matrix.py: This is where documents (vecotor space) index is implemented.
+
+metrics.py: Distance measures (cosine and euclidean distance).
+
 classifier.py: The following classifiers are implemented here:
 
 * Rocchio: Rocchio Classifier 
@@ -41,8 +43,99 @@ One more class here is 'Evaluation', which is used to calculate accuracy during 
 preprocessor.py is the module where files parsing tokenizing, stemming and PoS tagging are implemented
 If we have time to add feature selection (such as Mutual Information Gain), it should be implemented here.
  
-How to use
-----------
+How to use for Vector Space IR
+-------------------------------
+
+The main modules to use here are matrix.py and metrics.py,
+however you might find the preprocessor.py useful too::
+
+    # Load the three modules:
+    from irlib.preprocessor import Preprocessor
+    from irlib.matrix import Matrix
+    from irlib.metrics import Metrics
+  
+    # Create instances for their classes:
+    prep = Preprocessor()
+    mx = Matrix()
+    metric = Metrics()
+
+For simplicity, let's assume you have a single text file tweets.txt,
+And each line represent a seperate tweet (document).
+
+We will read the file, line after the other, 
+and then use the preprocessor to tokenize the line into words.
+There are more options for the ngram_tokenizer, such as producing bigrams,
+converting tokens into lower space, stemming and converting to PoS.
+However, we will stick to the default options for now.
+Then we will load the document into our VSM, aka Matrix. 
+More on the frequency and do_padding options later on:: 
+
+    fd = open('tweets.txt','r')
+    for line in fd.readlines(): 
+        terms = prep.ngram_tokenizer(text=line)
+        mx.add_doc( doc_id='some-unique-identifier', 
+                    doc_terms=terms, 
+                    frequency=True, 
+                    do_padding=True)
+        
+Now, we are done with loading our documents, let someone search for a tweet::
+
+    q = raw_input("Enter query to search for a tweet: ")
+
+Again, we can use the preprocessor to tokenize the query.
+We also need to align the terms used in the query with ones read from ducuments,
+i.e. we need them both to be put in equal length lists and ignore terms in query
+not seen before when reading the documents::
+
+    terms = prep.ngram_tokenizer(text=q)
+    q_vector = query_to_vector(terms, frequency=False)
+
+Finally, to get the best matching document to our query, 
+we can loop on all documents in the Matrix and find the one with least distance.
+We will just show the looping here, you can easily compare distances, 
+and sort documents according to their relevance if you want to. 
+
+    for doc in self.mx.docs:
+        distance = metric.euclid_vectors(doc['terms'], q_vector)
+
+We are done for now, but before moving to the next section let me discuss 
+the following:
+
+The add_doc() method in Matrix has two more options we skipped earlier:
+    
+* frequency:: 
+
+    If True, then we are using a multinomial mode (You usually will need this) 
+    i.e. if terms occurs n times in document, then it frequency is n.
+    If False, then we are using a multivariate (Bernoulli) mode, 
+    i.e. if terms occurs in document at least one time, then it frequency is 1,
+    otherwise its frequency is zero.
+
+* do_padding::
+
+    Each time we add new document, we also see new terms, 
+    hence if terms represent columns in our matrix and documents represent rows,
+    we might end with new rows of bigger length than order rows.
+    So, padding here is to align the length of older rows with newer ones.
+    So you either set this to True with each new document, 
+    or call mx.do_padding() when done.
+
+Wait a minute, two more notes:    
+
+* We haven't converted our VSM into tf.idf in the previous example, 
+however, you normally need to do so. So you have to call the follwing method,
+right after loading your documents and before doing searches::
+
+    mx.tf_idf()
+
+We have used the Euclidean distance in our example, yet you may need to use 
+cosine distance instead, so, here is the method for that::
+
+    metric.cos_vectors() 
+
+
+How to use for classification
+------------------------------
 
 Your code should does the following
 
