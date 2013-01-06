@@ -93,7 +93,7 @@ not seen before when reading the documents::
 Finally, to get the best matching document to our query, 
 we can loop on all documents in the Matrix and find the one with least distance.
 We will just show the looping here, you can easily compare distances, 
-and sort documents according to their relevance if you want to. 
+and sort documents according to their relevance if you want to:: 
 
     for doc in self.mx.docs:
         distance = metric.euclid_vectors(doc['terms'], q_vector)
