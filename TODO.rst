@@ -20,6 +20,7 @@ Things to be done
         Both Euclidean and Cosine distances should be added here.
 
 - [ ]   We need a way to dump VSM into file (pickle) and read it back
+        Do padding automatically if not done before comparisons or tf.idf
 
 - [ ]   Add statistics to VSM, ie. most frequent terms, histograms, etc.
         We probably add special class for that, MI can go here too.
