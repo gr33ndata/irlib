@@ -14,13 +14,15 @@ Things to be done
           however, no need to put queries in a Vector Space as we do now.
 
 - [ ]   We need add pruning and MI (Mutual Information) again to our code
+        Use it to skip columns from the VSM as well.
 
 - [x]   We need to add basic TF-IDF search capabilities to our Vecotr Space.
         Both Euclidean and Cosine distances should be added here.
 
 - [ ]   We need a way to dump VSM into file (pickle) and read it back
 
-- [ ]   We need to add statistics to VSM, ie. most frequent terms, histograms, etc.
+- [ ]   Add statistics to VSM, ie. most frequent terms, histograms, etc.
         We probably add special class for that, MI can go here too.
 
-- [ ]   We need to implement Ye's shapelet classifier
+- [ ]   We need to implement Ye's shapelet classifier.
+        Probably implement it as standalone, not here in irlib.
