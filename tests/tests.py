@@ -88,7 +88,7 @@ class TestMatrix(unittest.TestCase):
         self.s = Stats(self.m)
         self.assertEqual(self.s.getN(), 11)
         self.assertEqual(self.s.pr_term('buy'), float(4)/self.s.getN())
-        
+        self.s.mi()
         
 if __name__ == '__main__':
     unittest.main()

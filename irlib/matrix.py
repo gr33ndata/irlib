@@ -157,7 +157,8 @@ class Stats:
             self.classes[c]['total'] = sum(self.classes[c]['terms'])
             self.terms.add(self.classes[c]['terms'])
             self.N += self.classes[c]['total']
-    
+        self.mi_terms = []
+        
     def getN(self):
         ''' Get total number of terms, counting their frequencies too.
             Notice: This is not the same as len(vocabulary)
@@ -174,6 +175,26 @@ class Stats:
     def pr_class(self, c):
         ' Get probability of class c '
         return float(self.classes[c]['total']) / self.N
+        
+    def pr_joint(self, t, c):
+        'Get joint probability between term t and class c'
+        i = self.mx[t]
+        if i == -1:
+            return 0
+        return float(self.classes[c]['terms'][i]) / self.N
+        
+    def mi(self):
+        for t in self.mx.vocabulary():
+            mi = 0
+            for c in self.classes:
+                try:
+                    mi += self.pr_joint(t,c) * math.log10( self.pr_joint(t,c) / ( self.pr_term(t) * self.pr_class(c) ))
+                except:
+                    # Oh, log(0), let's set mi = 0
+                    mi = 0
+            self.mi_terms.append(mi) 
+        print self.classes    
+        print self.mi_terms
         
 if __name__ == '__main__':
 
