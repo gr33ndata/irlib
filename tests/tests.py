@@ -83,8 +83,13 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(len(self.m),3)
         self.assertEqual('buy' in self.m, True)
         self.assertEqual('shpping' in self.m, False)
-        self.assertEqual(self.m.classes, ['Spam', 'Ham'])
-
+        self.assertEqual(self.m.classes.keys().sort(), ['Spam', 'Ham'].sort())
+        self.m.add_doc( doc_id = 'file_spam.txt', 
+                        doc_class='', 
+                        doc_terms= doc2_terms,
+                        frequency=True,
+                        do_padding=True)
+        print self.m.classes
 
 if __name__ == '__main__':
     unittest.main()

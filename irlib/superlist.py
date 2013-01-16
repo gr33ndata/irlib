@@ -11,6 +11,15 @@ class SuperList(list):
         So that we can add some helper methods and functionalities.
     '''
 
+    def add(self, other_list):
+        ''' Add lists, item to item
+        '''
+        if len(self) != len(other_list):
+            self.expand(len(other_list))
+        for i in range(len(other_list)):
+            self[i] += other_list[i]
+
+
     def nonzero_count(self):
         ''' Returns number of non-zero items in list
         '''

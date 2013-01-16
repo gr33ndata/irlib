@@ -24,7 +24,7 @@ class Matrix:
         # List of unique terms (vocabulary)
         self.terms = SuperList()
         # List of document classes (optional)
-        self.classes = SuperList()
+        self.classes = {}
         self.docs = []
 
     def __len__(self):
@@ -99,7 +99,11 @@ class Matrix:
                             'class': doc_class, 
                             'terms': my_doc_terms})
         # Update list of document classes if new class seen.
-        self.classes.unique_append(doc_class)
+        #self.classes.unique_append(doc_class)
+        if self.classes.has_key(doc_class):
+            self.classes[doc_class].add(my_doc_terms)
+        else:
+            self.classes[doc_class] = my_doc_terms
         if do_padding: 
             self.do_padding()
         
