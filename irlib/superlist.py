@@ -11,15 +11,40 @@ class SuperList(list):
         So that we can add some helper methods and functionalities.
     '''
 
-    def add(self, other_list):
+    def add(self, b):
+        if type(b) == int:
+            self.add_number(b)
+        else:
+            self.add_list(b)
+            
+    def add_list(self, b):
         ''' Add lists, item to item
         '''
-        if len(self) != len(other_list):
-            self.expand(len(other_list))
-        for i in range(len(other_list)):
-            self[i] += other_list[i]
-
-
+        if len(self) != len(b):
+            self.expand(len(b))
+        for i in range(len(self)):
+            self[i] += b[i]
+    
+    def add_number(self, b):
+        for i in range(len(self)):
+            self[i] += b
+    
+    def div(self, b):
+        if type(b) == int:
+            self.div_number(b)
+        else:
+            self.div_list(b)
+                    
+    def div_list(self, b):
+        if len(self) != len(b):
+            self.expand(len(b))
+        for i in range(len(self)):
+            self[i] = float(self[i]) / b[i]
+            
+    def div_number(self, b):
+        for i in range(len(self)):
+            self[i] = float(self[i]) / b
+                    
     def nonzero_count(self):
         ''' Returns number of non-zero items in list
         '''

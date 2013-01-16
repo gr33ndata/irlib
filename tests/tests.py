@@ -5,7 +5,7 @@ import unittest
 
 sys.path.append('../')
 from irlib.superlist import SuperList
-from irlib.matrix import Matrix
+from irlib.matrix import Matrix, Stats
 from irlib.metrics import Metrics
  
 class TestSuperList(unittest.TestCase):
@@ -84,12 +84,11 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual('buy' in self.m, True)
         self.assertEqual('shpping' in self.m, False)
         self.assertEqual(self.m.classes.keys().sort(), ['Spam', 'Ham'].sort())
-        self.m.add_doc( doc_id = 'file_spam.txt', 
-                        doc_class='', 
-                        doc_terms= doc2_terms,
-                        frequency=True,
-                        do_padding=True)
-        print self.m.classes
-
+        
+        self.s = Stats(self.m)
+        self.assertEqual(self.s.getN(), 11)
+        self.assertEqual(self.s.pr_term('buy'), float(4)/self.s.getN())
+        
+        
 if __name__ == '__main__':
     unittest.main()

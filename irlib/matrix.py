@@ -23,7 +23,7 @@ class Matrix:
     def __init__(self):
         # List of unique terms (vocabulary)
         self.terms = SuperList()
-        # List of document classes (optional)
+        # List of document classes and terms summary
         self.classes = {}
         self.docs = []
 
@@ -34,7 +34,7 @@ class Matrix:
     def vocabulary(self):
         'Returns list of unique terms'
         return self.terms
-
+            
     def __str__(self):
         s  = 'Matrix:'
         s += '\n * Terms read: %d' % len(self.terms)
@@ -45,12 +45,21 @@ class Matrix:
         'Checks if certain terms is loaded'
         return self.terms.__contains__(term)        
 
-    def __getitem__(self, term):
+    def to_be_deleted__getitem__(self, term):
         'Returns occurences of term in all documents'
         if not term in self:
             return SuperList()
         col = [doc['terms'][self.terms.index(term)] for doc in self.docs]
         return SuperList(col)
+        
+    def __getitem__(self, term):
+        ''' If term exists in terms, retruns it position in list,
+            otherwise, return -1
+        '''    
+        if not term in self:
+            return -1
+        else:
+            return self.terms.index(term)
     
     def do_padding(self):
         ''' Align the length of all rows in matrix
@@ -129,6 +138,43 @@ class Matrix:
                 my_query_vector.insert_after_padding(term_idx,1)
         return my_query_vector
 
+'''
+classes = {
+    'class1': {'terms': [1,2,0,3], 'totel': 6}
+}
+terms = []
+'''    
+class Stats:
+
+    def __init__(self, matrix):
+        self.mx = matrix
+        self.N  = 0
+        self.classes = {}
+        self.terms = SuperList()       
+        for c in self.mx.classes:
+            self.classes[c] = {}
+            self.classes[c]['terms'] = self.mx.classes[c]
+            self.classes[c]['total'] = sum(self.classes[c]['terms'])
+            self.terms.add(self.classes[c]['terms'])
+            self.N += self.classes[c]['total']
+    
+    def getN(self):
+        ''' Get total number of terms, counting their frequencies too.
+            Notice: This is not the same as len(vocabulary)
+        '''
+        return self.N
+            
+    def pr_term(self, t):
+        ' Get probability of term t '
+        i = self.mx[t]
+        if i == -1:
+            return 0
+        return float(self.terms[i]) / self.N
+
+    def pr_class(self, c):
+        ' Get probability of class c '
+        return float(self.classes[c]['total']) / self.N
+        
 if __name__ == '__main__':
 
     pass
