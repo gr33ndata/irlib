@@ -37,7 +37,7 @@ class Matrix:
             
     def __str__(self):
         s  = 'Matrix:'
-        s += '\n * Terms read: %d' % len(self.terms)
+        s += '\n * Vocabulary read: %d' % len(self.terms)
         s += '\n * Documents read: %d' % len(self.docs)
         return s
 
@@ -69,8 +69,12 @@ class Matrix:
             So, this method alighn all previously added rows, 
             to match the current length of the terms list.
         '''
+        if len(self.docs[-1]) == len(self.docs[0]):
+            return
         for doc in self.docs:
             doc['terms'].expand(new_len=len(self.terms))
+        #for cls in self.classes:
+        #    self.classes[cls].expand(new_len=len(self.terms))
 
     def tf_idf(self, do_idf=True):
         ''' Converts matrix to tf.idf values
@@ -137,6 +141,9 @@ class Matrix:
             else:
                 my_query_vector.insert_after_padding(term_idx,1)
         return my_query_vector
+        
+    def get_stats(self):
+        return Stats(self)
 
 '''
 classes = {
@@ -159,11 +166,24 @@ class Stats:
             self.N += self.classes[c]['total']
         self.mi_terms = []
         
+    def __str__(self):
+        s  = 'Matrix Stats:'
+        s += '\n * Vocabulary/Terms: %d/%d' % (len(self.terms), self.N)
+        return s
+        
     def getN(self):
         ''' Get total number of terms, counting their frequencies too.
             Notice: This is not the same as len(vocabulary)
         '''
         return self.N
+        
+    def get_terms_freq(self, normalized=False):
+        ''' Returns 2d matrix of vocabulary terms and their occurences
+            if normalized is True, devide by total number of terms
+        '''
+        terms = self.mx.terms
+        freq = self.terms.div(self.N) if normalized else self.terms
+        return [terms, freq] 
             
     def pr_term(self, t):
         ' Get probability of term t '

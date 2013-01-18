@@ -10,6 +10,14 @@ class SuperList(list):
     ''' SuperList: An alternatice to Python's default lists (arrays)
         So that we can add some helper methods and functionalities.
     '''
+    
+    def align_to_list(self, b):
+        ''' Make sure self and be are equal in length
+        '''
+        if len(self) < len(b):
+            self.expand(len(b))
+        elif len(b) < len(self):
+            b.expand(len(self))
 
     def add(self, b):
         if type(b) == int:
@@ -20,8 +28,7 @@ class SuperList(list):
     def add_list(self, b):
         ''' Add lists, item to item
         '''
-        if len(self) != len(b):
-            self.expand(len(b))
+        self.align_to_list(b)
         for i in range(len(self)):
             self[i] += b[i]
     
@@ -36,8 +43,7 @@ class SuperList(list):
             self.div_list(b)
                     
     def div_list(self, b):
-        if len(self) != len(b):
-            self.expand(len(b))
+        self.align_to_list(b)
         for i in range(len(self)):
             self[i] = float(self[i]) / b[i]
             
