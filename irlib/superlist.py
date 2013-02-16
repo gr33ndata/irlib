@@ -69,7 +69,8 @@ class SuperList(list):
     def expand(self, new_len=0, padding_data=float(0)):
 		''' Expand a list size to new_len, 
             then fill new cells with padding_data. 
-            The defaul padding_data is float(0).'''
+            The defaul padding_data is float(0).
+        '''
 		for i in range(len(self),new_len):
 			self.append(padding_data)
 

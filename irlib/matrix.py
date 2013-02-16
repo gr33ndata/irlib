@@ -24,7 +24,7 @@ class Matrix:
         # List of unique terms (vocabulary)
         self.terms = SuperList()
         # List of document classes and terms summary
-        self.classes = {}
+        #self.classes = {}
         self.docs = []
 
     def __len__(self):
@@ -41,6 +41,23 @@ class Matrix:
         s += '\n * Documents read: %d' % len(self.docs)
         return s
 
+    def dump(self, filename, delimiter='\t'):
+        fd = open(filename,'w')
+        # Let's first print file header
+        header = 'id'
+        for term in self.terms:
+            header = header + delimiter + term
+        header = header + delimiter + 'class'
+        fd.write('%s\n' % header)
+        # Now we print data lines
+        for doc in self.docs:
+            line = doc['id']
+            for term in doc['terms']:
+                line = line + delimiter + str(term) 
+            line = line + delimiter +  doc['class']
+            fd.write('%s\n' % line)
+        fd.close()
+    
     def __contains__(self, term):
         'Checks if certain terms is loaded'
         return self.terms.__contains__(term)        
@@ -69,7 +86,7 @@ class Matrix:
             So, this method alighn all previously added rows, 
             to match the current length of the terms list.
         '''
-        if len(self.docs[-1]) == len(self.docs[0]):
+        if len(self.docs[-1]['terms']) == len(self.docs[0]['terms']):
             return
         for doc in self.docs:
             doc['terms'].expand(new_len=len(self.terms))
@@ -113,12 +130,12 @@ class Matrix:
                             'terms': my_doc_terms})
         # Update list of document classes if new class seen.
         #self.classes.unique_append(doc_class)
-        if self.classes.has_key(doc_class):
-            self.classes[doc_class].add(my_doc_terms)
-        else:
-            self.classes[doc_class] = my_doc_terms
-        if do_padding: 
-            self.do_padding()
+        #if self.classes.has_key(doc_class):
+        #else:
+        #    self.classes[doc_class].add(my_doc_terms)
+        #    self.classes[doc_class] = my_doc_terms
+        #if do_padding: 
+        #    self.do_padding()
         
 
     def query_to_vector(self, q_terms, frequency=False,):
@@ -157,14 +174,15 @@ class Stats:
         self.mx = matrix
         self.N  = 0
         self.classes = {}
-        self.terms = SuperList()       
-        for c in self.mx.classes:
-            self.classes[c] = {}
-            self.classes[c]['terms'] = self.mx.classes[c]
-            self.classes[c]['total'] = sum(self.classes[c]['terms'])
-            self.terms.add(self.classes[c]['terms'])
-            self.N += self.classes[c]['total']
-        self.mi_terms = []
+        
+        #self.terms = SuperList()       
+        #for c in self.mx.classes:
+        #    self.classes[c] = {}
+        #    self.classes[c]['terms'] = self.mx.classes[c]
+        #    self.terms.add(self.classes[c]['terms'])
+        #    self.classes[c]['total'] = sum(self.classes[c]['terms'])
+        #    self.N += self.classes[c]['total']
+        #self.mi_terms = []
         
     def __str__(self):
         s  = 'Matrix Stats:'
