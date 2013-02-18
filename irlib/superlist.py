@@ -82,11 +82,8 @@ class SuperList(list):
             then fill new cells with padding_data. 
             The defaul padding_data is float(0).
         '''
-        #print 'expand:', new_len, len(self)
         new_tail = [padding_data] * (new_len - len(self))
-        #print new_tail
         self += new_tail
-        #print 'expand:', self, len(self)
 
     def insert_after_padding(self, index, item, padding_data=float(0)):
 		''' Add item in specific index location, and expand if needed. 

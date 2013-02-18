@@ -137,8 +137,6 @@ class Matrix:
         # And document (row) with its associated data.
         my_doc_terms = SuperList()
         for term in doc_terms:
-            term_idx = self.terms.unique_append(term)
-            #my_doc_terms.insert_after_padding(self.terms.index(term))
             if type(term) == tuple:
                 term_idx = self.terms.unique_append(term[0])
                 my_doc_terms.increment_after_padding(term_idx,term[1])
