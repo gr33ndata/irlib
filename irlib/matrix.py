@@ -155,8 +155,8 @@ class Matrix:
         #else:
         #    self.classes[doc_class].add(my_doc_terms)
         #    self.classes[doc_class] = my_doc_terms
-        #if do_padding: 
-        #    self.do_padding()
+        if do_padding: 
+            self.do_padding()
         
 
     def query_to_vector(self, q_terms, frequency=False,):

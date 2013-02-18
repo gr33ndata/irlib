@@ -79,16 +79,18 @@ class TestMatrix(unittest.TestCase):
                         doc_terms= doc2_terms,
                         frequency=True,
                         do_padding=True)
-        self.assertEqual(len(self.m.terms), len(self.m.docs[0]['terms']))     
+        print self.m.terms, self.m.docs[0]['terms']
+        self.assertEqual(len(self.m.terms), len(self.m.docs[0]['terms'])) 
         self.assertEqual(len(self.m),3)
         self.assertEqual('buy' in self.m, True)
-        self.assertEqual('shpping' in self.m, False)
-        self.assertEqual(self.m.classes.keys().sort(), ['Spam', 'Ham'].sort())
+        self.assertEqual('shopping' in self.m, False)
         
-        self.s = Stats(self.m)
-        self.assertEqual(self.s.getN(), 11)
-        self.assertEqual(self.s.pr_term('buy'), float(4)/self.s.getN())
-        self.s.mi()
+        # The statistical class is removed for now.
+        #self.assertEqual(self.m.classes.keys().sort(), ['Spam', 'Ham'].sort())
+        #self.s = Stats(self.m)
+        #self.assertEqual(self.s.getN(), 11)
+        #self.assertEqual(self.s.pr_term('buy'), float(4)/self.s.getN())
+        #self.s.mi()
         
 if __name__ == '__main__':
     unittest.main()
