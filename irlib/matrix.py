@@ -45,17 +45,34 @@ class Matrix:
         fd = open(filename,'w')
         # Let's first print file header
         header = 'id'
+        header = header + delimiter + 'class'
         for term in self.terms:
             header = header + delimiter + term
-        header = header + delimiter + 'class'
         fd.write('%s\n' % header)
         # Now we print data lines
         for doc in self.docs:
             line = doc['id']
+            line = line + delimiter +  doc['class']
             for term in doc['terms']:
                 line = line + delimiter + str(term) 
-            line = line + delimiter +  doc['class']
             fd.write('%s\n' % line)
+        fd.close()
+    
+    def dump_transposed(self, filename, delimiter='\t'):
+        fd = open(filename,'w')
+        # Let's first print file header
+        header = 'terms'
+        for doc in self.docs:
+            header = header + delimiter + doc['id']
+        fd.write('%s\n' % header)
+        # Now we print data lines
+        idx = 0
+        for term in self.terms:
+            line = term
+            for doc in self.docs:
+                line = line + delimiter + str(doc['terms'][idx]) 
+            fd.write('%s\n' % line)
+            idx += 1
         fd.close()
     
     def __contains__(self, term):
@@ -111,6 +128,7 @@ class Matrix:
             doc_id: Identifier for the document, eg. file name, url, etc. 
             doc_class: You might need this in classification.
             doc_terms: List of terms you got after tokenizing the document.
+                       Terms can be typles, string and values
             frequency: If true, term occurences is incremented by one.
                         Else, occurences is only 0 or 1 (a la Bernoulli)
             do_padding: Boolean. Check do_padding() for more info.
@@ -121,10 +139,15 @@ class Matrix:
         for term in doc_terms:
             term_idx = self.terms.unique_append(term)
             #my_doc_terms.insert_after_padding(self.terms.index(term))
-            if frequency:
-                my_doc_terms.increment_after_padding(term_idx,1)
+            if type(term) == tuple:
+                term_idx = self.terms.unique_append(term[0])
+                my_doc_terms.increment_after_padding(term_idx,term[1])
             else:
-                my_doc_terms.insert_after_padding(term_idx,1)
+                term_idx = self.terms.unique_append(term)
+                if frequency:
+                    my_doc_terms.increment_after_padding(term_idx,1)
+                else:
+                    my_doc_terms.insert_after_padding(term_idx,1)
         self.docs.append({  'id': doc_id, 
                             'class': doc_class, 
                             'terms': my_doc_terms})
