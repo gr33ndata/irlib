@@ -66,13 +66,27 @@ class SuperList(list):
             self.append(item)
             return len(self) - 1
 
-    def expand(self, new_len=0, padding_data=float(0)):
-		''' Expand a list size to new_len, 
+    def _expand(self, new_len=0, padding_data=float(0)):
+        ''' /!\ This is an old piece of code,
+            We replaced it with more optimized one.
+            Underscored and left for testing purpose for now.
+            Expand a list size to new_len, 
             then fill new cells with padding_data. 
             The defaul padding_data is float(0).
         '''
-		for i in range(len(self),new_len):
-			self.append(padding_data)
+        for i in range(len(self),new_len):
+            self.append(padding_data)
+    
+    def expand(self, new_len=0, padding_data=float(0)):
+        ''' Expand a list size to new_len, 
+            then fill new cells with padding_data. 
+            The defaul padding_data is float(0).
+        '''
+        #print 'expand:', new_len, len(self)
+        new_tail = [padding_data] * (new_len - len(self))
+        #print new_tail
+        self += new_tail
+        #print 'expand:', self, len(self)
 
     def insert_after_padding(self, index, item, padding_data=float(0)):
 		''' Add item in specific index location, and expand if needed. 
@@ -89,6 +103,7 @@ class SuperList(list):
             However, existing items at index are incremented.  
 		'''
 		self.expand(new_len=index+1, padding_data=padding_data)
+		#print 'increment_after_padding:', index, len(self)
 		self[index] = self[index] + item
 
     # We need to implement this
