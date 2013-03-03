@@ -41,14 +41,17 @@ class Matrix:
         s += '\n * Documents read: %d' % len(self.docs)
         return s
 
-    def dump(self, filename, delimiter='\t'):
+    def dump(self, filename, delimiter='\t', header=True):
+        ''' Dumps matrix to a file
+        '''
         fd = open(filename,'w')
         # Let's first print file header
-        header = 'id'
-        header = header + delimiter + 'class'
+        header_line = 'id'
+        header_line = header_line + delimiter + 'class'
         for term in self.terms:
-            header = header + delimiter + term
-        fd.write('%s\n' % header)
+            header_line = header_line + delimiter + term
+        if header:
+            fd.write('%s\n' % header_line)
         # Now we print data lines
         for doc in self.docs:
             line = doc['id']
@@ -58,13 +61,14 @@ class Matrix:
             fd.write('%s\n' % line)
         fd.close()
     
-    def dump_transposed(self, filename, delimiter='\t'):
+    def dump_transposed(self, filename, delimiter='\t', header=True):
         fd = open(filename,'w')
         # Let's first print file header
-        header = 'terms'
+        header_line = 'terms'
         for doc in self.docs:
-            header = header + delimiter + doc['id']
-        fd.write('%s\n' % header)
+            header_line = header_line + delimiter + doc['id']
+        if header:
+            fd.write('%s\n' % header_line)
         # Now we print data lines
         idx = 0
         for term in self.terms:
@@ -75,6 +79,55 @@ class Matrix:
             idx += 1
         fd.close()
     
+    def dump_transposed_arff(self, filename):
+        fd = open(filename,'w')
+        # Let's first print file header
+        header = '@RELATION %s\n\n' % filename.split('.')[0]
+        header = header + '@ATTRIBUTE terms STRING\n'
+        for doc in self.docs:
+            header = header + '@ATTRIBUTE "%s" NUMERIC\n' % doc['id']
+        fd.write('%s\n' % header)
+        
+        # Now we print data lines
+        fd.write('@DATA\n')
+        idx = 0
+        delimiter = ','
+        for term in self.terms:
+            line = '"%s"' % term
+            for doc in self.docs:
+                line = line + delimiter + str(doc['terms'][idx]) 
+            fd.write('%s\n' % line)
+            idx += 1
+        fd.close()
+        
+    def prune(self, prune_map):
+        ''' Helper method to remove terms (fields) of our matrix
+            prune_map is a list of 0's and 1's of same length as self.terms.
+            For each term, if 0, then remove it, otherwise keep it.
+        '''
+        if not(prune_map) or len(prune_map) != len(self.terms):
+            return False
+        for i in range(len(prune_map)-1,-1,-1):
+            if prune_map[i] == 0:
+                #print self.terms[i]
+                self.terms.pop(i)
+                for doc in self.docs:
+                    doc['terms'].pop(i)
+     
+    def freq_levels(self, threshold=3):
+        ''' Creates a list of 0's and 1's,
+            where 1 means term's freq >= threshold
+        '''
+        freq_map = [0] * len(self.terms)
+        for i in range(0,len(self.terms)):
+            val = 0
+            for doc in self.docs:
+                if doc['terms'][i] != 0:
+                    val += 1 
+            if val >= threshold:
+                freq_map[i] = 1
+        return freq_map         
+        
     def __contains__(self, term):
         'Checks if certain terms is loaded'
         return self.terms.__contains__(term)        
