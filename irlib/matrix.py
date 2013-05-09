@@ -61,6 +61,28 @@ class Matrix:
             fd.write('%s\n' % line)
         fd.close()
     
+    def dump_arff(self, filename, delimiter=',',):
+        ''' Dumps matrix to a file
+        '''
+        fd = open(filename,'w')
+        header = '@RELATION %s\n\n' % filename.split('.')[0]
+        header = header + '@ATTRIBUTE \'ID\' NUMERIC\n'
+        for term in self.terms:
+            header = header + '@ATTRIBUTE \'' + term + '\' NUMERIC\n'
+        header = header + '@ATTRIBUTE class NUMERIC\n'
+        fd.write('%s\n' % header)
+        
+        # Now we print data lines
+        fd.write('@DATA\n')
+        for doc in self.docs:
+            line = doc['id']
+            for term in doc['terms']:
+                line = line + delimiter + str(term) 
+            line = line + delimiter +  str(doc['class'])
+            fd.write('%s\n' % line)
+        fd.close()
+        
+        
     def dump_transposed(self, filename, delimiter='\t', header=True):
         fd = open(filename,'w')
         # Let's first print file header
