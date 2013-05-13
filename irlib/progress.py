@@ -28,6 +28,8 @@ class Progress:
             it will only display progress at percentages steps
         '''
         self.count += 1
-        if not(self.count % self.step):
+        if self.count % self.step:
+            return 0
+        else:
             print '%s %#3d %%' % (message, (self.count * self.percent) / self.step)
-        
+            return 1

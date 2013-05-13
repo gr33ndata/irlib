@@ -144,14 +144,16 @@ class Matrix:
         '''
         if not(prune_map) or len(prune_map) != len(self.terms):
             return False
-        print ':: Pruning terms list ...'
+        if show_progress:
+            print '  Pruning terms list ...'
         new_terms =  SuperList()
         for i in range(len(prune_map)-1,-1,-1):
             if prune_map[i] == 1:
                 #print self.terms[i]
                 new_terms.append(self.terms[i])
         self.terms = new_terms
-        print ':: Pruning documents ...'
+        if show_progress:
+            print '  Pruning documents ...'
         p = Progress(n=len(self), percent=10)
         for doc in self.docs:
             new_doc_terms =  SuperList()
@@ -160,7 +162,7 @@ class Matrix:
                     new_doc_terms.append(doc['terms'][i])
             doc['terms'] = new_doc_terms
             if show_progress:
-                p.show(message='\tPruning progress:')
+                p.show(message='  Pruning progress:')
                      
     def freq_levels(self, threshold=3):
         ''' Creates two lists:
