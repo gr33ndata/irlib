@@ -160,7 +160,7 @@ class Matrix:
                     new_doc_terms.append(doc['terms'][i])
             doc['terms'] = new_doc_terms
             if show_progress:
-                p.show()
+                p.show(message='\tPruning progress:')
                      
     def freq_levels(self, threshold=3):
         ''' Creates two lists:
