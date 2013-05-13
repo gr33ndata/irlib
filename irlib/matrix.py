@@ -8,6 +8,7 @@ Matrix is an index for documents, terms, and their classes.
 
 import sys, math
 from superlist import SuperList
+from progress import Progress
 
 def log_tf(value):
     ''' The log(tf) 
@@ -61,7 +62,7 @@ class Matrix:
             fd.write('%s\n' % line)
         fd.close()
     
-    def dump_arff(self, filename, delimiter=',',):
+    def dump_arff(self, filename, delimiter=',', clstype='NUMERIC'):
         ''' Dumps matrix to a file
         '''
         fd = open(filename,'w')
@@ -69,7 +70,7 @@ class Matrix:
         header = header + '@ATTRIBUTE \'ID\' NUMERIC\n'
         for term in self.terms:
             header = header + '@ATTRIBUTE \'' + term + '\' NUMERIC\n'
-        header = header + '@ATTRIBUTE class NUMERIC\n'
+        header = header + '@ATTRIBUTE \'ClassLabel\'' + clstype + '\n'
         fd.write('%s\n' % header)
         
         # Now we print data lines
@@ -135,11 +136,39 @@ class Matrix:
                 self.terms.pop(i)
                 for doc in self.docs:
                     doc['terms'].pop(i)
-     
-    def freq_levels(self, threshold=3):
-        ''' Creates a list of 0's and 1's,
-            where 1 means term's freq >= threshold
+                    
+    def prune_new(self, prune_map, show_progress=True):
+        ''' Helper method to remove terms (fields) of our matrix
+            prune_map is a list of 0's and 1's of same length as self.terms.
+            For each term, if 0, then remove it, otherwise keep it.
         '''
+        if not(prune_map) or len(prune_map) != len(self.terms):
+            return False
+        print ':: Pruning terms list ...'
+        new_terms =  SuperList()
+        for i in range(len(prune_map)-1,-1,-1):
+            if prune_map[i] == 1:
+                #print self.terms[i]
+                new_terms.append(self.terms[i])
+        self.terms = new_terms
+        print ':: Pruning documents ...'
+        p = Progress(n=len(self), percent=10)
+        for doc in self.docs:
+            new_doc_terms =  SuperList()
+            for i in range(len(prune_map)-1,-1,-1):
+                if prune_map[i] == 1:
+                    new_doc_terms.append(doc['terms'][i])
+            doc['terms'] = new_doc_terms
+            if show_progress:
+                p.show()
+                     
+    def freq_levels(self, threshold=3):
+        ''' Creates two lists:
+            threshold_map is a list of 0's and 1's,
+            where 1 means term's freq >= threshold
+            freq_map is a list of terms frequences
+        '''
+        threshold_map = [0] * len(self.terms)
         freq_map = [0] * len(self.terms)
         for i in range(0,len(self.terms)):
             val = 0
@@ -147,8 +176,9 @@ class Matrix:
                 if doc['terms'][i] != 0:
                     val += 1 
             if val >= threshold:
-                freq_map[i] = 1
-        return freq_map         
+                threshold_map[i] = 1
+            freq_map[i] = val
+        return (threshold_map, freq_map)         
         
     def __contains__(self, term):
         'Checks if certain terms is loaded'
