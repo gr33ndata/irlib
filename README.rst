@@ -159,7 +159,7 @@ Save matrix to file
 --------------------
 
 You can save matrix to a file, either for loading it later on, or to use it with a different machine learning software.
-Supported file types are CSV (both comma or tab seperated) and ARFF (for using it with `Weka <http://www.cs.waikato.ac.nz/ml/weka/>`) 
+Supported file types are CSV (both comma or tab seperated) and ARFF (for using it with `Weka <http://www.cs.waikato.ac.nz/ml/weka/>`_) 
 
 * To dump data into a CSV file::
 
