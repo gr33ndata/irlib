@@ -7,6 +7,7 @@ sys.path.append('../')
 from irlib.superlist import SuperList
 from irlib.matrix import Matrix, Stats
 from irlib.metrics import Metrics
+from irlib.progress import Progress
  
 class TestSuperList(unittest.TestCase):
 
@@ -79,7 +80,7 @@ class TestMatrix(unittest.TestCase):
                         doc_terms= doc2_terms,
                         frequency=True,
                         do_padding=True)
-        print self.m.terms, self.m.docs[0]['terms']
+        #print self.m.terms, self.m.docs[0]['terms']
         self.assertEqual(len(self.m.terms), len(self.m.docs[0]['terms'])) 
         self.assertEqual(len(self.m),3)
         self.assertEqual('buy' in self.m, True)
@@ -91,6 +92,20 @@ class TestMatrix(unittest.TestCase):
         #self.assertEqual(self.s.getN(), 11)
         #self.assertEqual(self.s.pr_term('buy'), float(4)/self.s.getN())
         #self.s.mi()
-        
+
+class TestProgress(unittest.TestCase):
+
+    def setUp(self):
+        self.p = Progress(n=1002, percent=10)
+
+    def test_add_doc(self):
+        # Try we should get 10 ones
+        total = 0
+        print '\n'
+        for i in range(0,1002):
+            total += self.p.show(message='Testing progress:')
+        print 'total:', total
+        self.assertEqual(total,10)   
+             
 if __name__ == '__main__':
     unittest.main()
