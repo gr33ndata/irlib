@@ -144,10 +144,10 @@ After loading your documents into the matrix, you can prune it using the followi
 
 * Calculate the frequencies for terms, using freq_levels(), it takes a pruning threshild and returns two lists:
 
-    * prune_map: list of 0's and 1's, a 0 means remove this term, and 1 means keep it. In same order as vocabulary()
-    * freq_map: This is the acutua frequencies each term. In same order as vocabulary()
+** prune_map: list of 0's and 1's, a 0 means remove this term, and 1 means keep it. In same order as vocabulary()
+** freq_map: This is the acutua frequencies each term. In same order as vocabulary()
     
-Here is an example::
+* Here is an example::
     
     prune_map, freq_map = mx.freq_levels(threshold=3)
 
