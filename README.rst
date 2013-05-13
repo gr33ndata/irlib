@@ -144,8 +144,8 @@ After loading your documents into the matrix, you can prune it using the followi
 
 * Calculate the frequencies for terms, using freq_levels(), it takes a pruning threshild and returns two lists:
 
-    1. prune_map: list of 0's and 1's, a 0 means remove this term, and 1 means keep it. In same order as vocabulary()
-    2. freq_map: This is the acutua frequencies each term. In same order as vocabulary()
+    1. prune_map: list of 0's and 1's, a 0 means remove this term, and 1 means keep it. In same order as list returned by vocabulary()
+    2. freq_map: This is the acutua frequencies each term. In same order as list returned by vocabulary()
     
 * Here is an example::
     
@@ -155,6 +155,24 @@ After loading your documents into the matrix, you can prune it using the followi
 
     mx.prune(prune_map, show_progress=True)
     
+Save matrix to file
+--------------------
+
+You can save matrix to a file, either for loading it later on, or to use it with a different machine learning software.
+Supported file types are CSV (both comma or tab seperated) and ARFF (for using it with `Weka <http://www.cs.waikato.ac.nz/ml/weka/>`) 
+
+* To dump data into a CSV file::
+
+    mx.dump('filename.csv', delimiter='\t', header=True):
+    
+* To dump it into ARFF file::
+
+    mx.dump_arff('filename.csv', clstype='{1,2}'):
+    
+* Notice that class labels in Weka are normally the last item in your featureset. Their type is normally set to 'Nominal attributes'. Hence, if for example you have 3 class labels A, B and C, you then should set clstype='{A,B,C}'. Recall that while reading your documents and adding them to the matrix using add_doc(), you can actaully set class labels there as follows::
+
+    mx.add_doc(doc_id = '42', doc_class='A', doc_terms=['the', 'apple', 'was', 'on', 'the', 'tree']):
+
 
 How to use for classification
 ------------------------------
