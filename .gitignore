@@ -33,3 +33,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Ignore delicious code
+/examples/delicious/
+/ddddd/
