@@ -21,12 +21,24 @@ def log_tf(value):
 
 class Matrix:
 
-    def __init__(self):
+    def __init__(self, whitelist=[]):
+        ''' Initilize our matrix.
+            whitelist: If not empty, discard any terms not in whitelist,
+                       when adding new terms via add_doc()
+            terms: We will populate this with our vocabulary of terms
+            docs: This is our actual 2D matrix terms/docs.
+                  A list of the following dictionary,
+                  { 'id': Unique ID to each document, 
+                    'class': In case of labeled data, doc class label, 
+                    'terms': list of 1's and 0's, i.e. term Frequencies.
+                  }
+        '''
         # List of unique terms (vocabulary)
         self.terms = SuperList()
         # List of document classes and terms summary
         #self.classes = {}
         self.docs = []
+        self.whitelist = whitelist
 
     def __len__(self):
         'Returns number of loaded ducuments'
@@ -243,6 +255,9 @@ class Matrix:
         # Update list of terms if new term seen.
         # And document (row) with its associated data.
         my_doc_terms = SuperList()
+        # Discard anything not in whitelist if it is not empty
+        if self.whitelist:
+            doc_terms = [t for t in doc_terms if t in self.whitelist]
         for term in doc_terms:
             if type(term) == tuple:
                 term_idx = self.terms.unique_append(term[0])
