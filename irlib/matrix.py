@@ -21,7 +21,7 @@ def log_tf(value):
 
 class Matrix:
 
-    def __init__(self,  whitelist=[]):
+    def __init__(self, whitelist=[]):
         ''' Initilize our matrix.
             whitelist: If not empty, discard any terms not in whitelist,
                        when adding new terms via add_doc()
