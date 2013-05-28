@@ -89,7 +89,7 @@ i.e. we need them both to be put in equal length lists and ignore terms in query
 not seen before when reading the documents::
 
     terms = prep.ngram_tokenizer(text=q)
-    q_vector = query_to_vector(terms, frequency=False)
+    q_vector = mx.query_to_vector(terms, frequency=False)
 
 Finally, to get the best matching document to our query, 
 we can loop on all documents in the Matrix and find the one with least distance.
