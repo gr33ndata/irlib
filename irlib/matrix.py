@@ -82,7 +82,7 @@ class Matrix:
         header = header + '@ATTRIBUTE \'ID\' NUMERIC\n'
         for term in self.terms:
             header = header + '@ATTRIBUTE \'' + term + '\' NUMERIC\n'
-        header = header + '@ATTRIBUTE \'ClassLabel\'' + clstype + '\n'
+        header = header + '@ATTRIBUTE \'ClassLabel\' ' + clstype + '\n'
         fd.write('%s\n' % header)
         
         # Now we print data lines
@@ -247,7 +247,7 @@ class Matrix:
             doc_id: Identifier for the document, eg. file name, url, etc. 
             doc_class: You might need this in classification.
             doc_terms: List of terms you got after tokenizing the document.
-                       Terms can be typles, string and values
+                       Terms can be typles; string and frequencies
             frequency: If true, term occurences is incremented by one.
                         Else, occurences is only 0 or 1 (a la Bernoulli)
             do_padding: Boolean. Check do_padding() for more info.
