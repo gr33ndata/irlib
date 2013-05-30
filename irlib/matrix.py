@@ -44,9 +44,21 @@ class Matrix:
         'Returns number of loaded ducuments'
         return len(self.docs)
 
-    def vocabulary(self):
-        'Returns list of unique terms'
-        return self.terms
+    def vocabulary(self, threshold_map=[]):
+        '''Returns list of all unique terms if threshold_map not given.
+           Otherwise, only return terms above threshold.        
+        '''
+        if not threshold_map:
+            return self.terms
+        elif len(threshold_map) == len(self.terms):
+            vlist = []
+            for i in range(len(self.terms)):
+                if threshold_map[i] == 1:
+                   vlist.append(self.terms[i])
+            return vlist 
+        else:
+            return []
+            
             
     def __str__(self):
         s  = 'Matrix:'
@@ -188,7 +200,8 @@ class Matrix:
             val = 0
             for doc in self.docs:
                 if doc['terms'][i] != 0:
-                    val += 1 
+                    #val += 1 
+                    val += doc['terms'][i]
             if val >= threshold:
                 threshold_map[i] = 1
             freq_map[i] = val
