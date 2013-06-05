@@ -66,6 +66,23 @@ class Matrix:
         s += '\n * Documents read: %d' % len(self.docs)
         return s
 
+    def dump_tf(self, filename, freqs, delimiter='\t', header=True):
+        ''' Dumps term frequencies
+        '''
+        fd = open(filename,'w')
+        # Let's first print file header
+        header_line = 'term'
+        header_line = header_line + delimiter + 'freq'
+        if header:
+            fd.write('%s\n' % header_line)
+        # Now we print data lines
+        terms = self.vocabulary()
+        for i in range(len(terms)):
+            line = terms[i]
+            line = line + delimiter + str(freqs[i])
+            fd.write('%s\n' % line)
+        fd.close()
+        
     def dump(self, filename, delimiter='\t', header=True):
         ''' Dumps matrix to a file
         '''
