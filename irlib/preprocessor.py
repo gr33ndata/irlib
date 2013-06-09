@@ -75,8 +75,11 @@ class Preprocessor:
 		if self.lower:
 			term = term.lower()
 		return term	
-
-
+		
+	# Segment term into list of characters
+	def term2ch(self, term):
+		return [ch for ch in term]
+    
 if __name__ == '__main__':
 
 	p = Preprocessor()
