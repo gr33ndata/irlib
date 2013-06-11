@@ -12,10 +12,13 @@ from superlist import SuperList
 from progress import Progress
 from preprocessor import Preprocessor
 
-
+class NGramCounter:
+    def __init__(self, n=3):
+        pass
+    
 class LM:
 
-    def __init__(self, n=3):
+    def __init__(self, n=3, verbose=False):
         '''
         Initializes our Language Model
         ngram = n-gram (default = 3)
@@ -30,10 +33,14 @@ class LM:
             }
         }   
         '''
+        self.verbose = verbose
         self.n = n
         self.term_count = {}
         self.vocabulary = set()
     
+    def get_vocabulary(self):
+        return list(self.vocabulary)
+        
     def logpr(self, x, base=2):
         if x == 0:
             return -math.log(0.0000001,base)
@@ -48,7 +55,8 @@ class LM:
             add_demom = len(self.vocabulary)
         pr = float(self.term_count[doc_id]['terms'].get(term,0) + add_numer) \
              / float(self.term_count[doc_id]['total'] + add_demom)
-        print term, pr
+        if self.verbose:
+            print term, pr
         if log:
             return -math.log(pr,logbase)
         else:
@@ -77,16 +85,27 @@ class LM:
             self.term_count[doc_id]['total'] += 1
             self.vocabulary.add(term)
 
-    def calculate(self, doc_terms=[]):
-        print self.term_count
+    def calculate(self, doc_terms=[], actual_id=''):
+        if self.verbose:
+            print self.term_count
+        calculated_id = {
+            'id_prob': -1,
+            'calc_id': '',
+            'actual_id': actual_id
+        }
         terms = self.ngrams(doc_terms)
         for doc_id in self.term_count:
-            print '\n', doc_id, ':'
+            #print '\n', doc_id, ':'
             doc_pr = 0
             for term in terms:
                 doc_pr += self.term_pr(doc_id, term, 
                         smooting='Laplace', log=True, logbase=2)
-            print doc_id, doc_pr            
+            if self.verbose:            
+                print doc_id, actual_id, doc_pr  
+            if calculated_id['id_prob'] == -1 or doc_pr < calculated_id['id_prob']:
+                calculated_id['id_prob'] = doc_pr
+                calculated_id['calc_id'] = doc_id
+        return calculated_id            
     
 if __name__ == '__main__':
 
