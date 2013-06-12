@@ -32,6 +32,8 @@ class LM:
         ''' Converts terms to all possibe ngrams 
             terms: list of terms
         '''
+        if len(terms) <= self.n:
+            return terms
         if self.n == 1:
             ngrams = [[term] for term in terms]
         else:
