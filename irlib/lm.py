@@ -13,8 +13,19 @@ from progress import Progress
 from preprocessor import Preprocessor
 
 class LM:
+
+    
     def __init__(self, n=3, lpad='', rpad='', joiner='', 
                  verbose=False):
+        '''
+        Initialize our LM
+        n: Pur LM's ngram, e.g. for bigram LM, n=2
+        lpad, rpad: Left and right padding. 
+                    If empty string '', then don't pad, else
+                    For each document read pad terms
+                    with n-1 repitition on lpad and/or rpad
+        joiner: What to use to join ngrams, practically it doesn't matter
+        '''
         self.n = n
         # Counters for joint probabilities
         # Count for w_1, w_2, w_3 ... w_{n-1}, w_n
@@ -56,6 +67,10 @@ class LM:
         if not doc_id in self.term_count_n_1:
             self.term_count_n_1[doc_id] = {'ngrams': {}, 'total': 0}
         for ngram in ngrams:
+            # Generate n-grams and sub-ngrams
+            # For example (n=2): ['t1','t2','t3','t4']
+            # ngram_n: ['t1 t2','t2 t3', 't3 t4']
+            # ngram_n_1: ['t1','t2','t3']
             ngram_n = self.joiner.join(ngram)
             ngram_n_1 = self.joiner.join(ngram[:-1])
             if ngram_n in self.term_count_n[doc_id]['ngrams']:
@@ -94,7 +109,7 @@ class LM:
             return pr
     
     def pr_doc(self, doc_id, log=True, logbase=2):
-        ''' This class may be overridden by implementers
+        ''' This method may be overridden by implementers
         ''' 
         #print 'Old pr_doc()'
         if log:
@@ -126,6 +141,8 @@ class LM:
             
                 
 class LM_Old:
+
+    ''' This is to be deleted, replaced with LM now'''
 
     def __init__(self, n=3, verbose=False):
         '''
