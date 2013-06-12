@@ -24,7 +24,12 @@ class Evaluation:
     def __init__(self, verbose=False):
         self.ev_results = {}
         self.doc_count = 0
-        
+    
+    def get_classes_labels(self):
+        target_classes = self.ev_results.keys()
+        target_classes.sort()
+        return target_classes
+            
     def ev(self, calculated_id, actual_id):
         calculated_id = str(calculated_id).strip()
         actual_id =str(actual_id).strip()
@@ -67,7 +72,7 @@ class Evaluation:
         return val
               
     def printev(self):
-        for target_class in self.ev_results:
+        for target_class in self.get_classes_labels():
             print target_class, \
                 'TP-rate', self.tp_rate(target_class), \
                 'FP-rate', self.fp_rate(target_class)

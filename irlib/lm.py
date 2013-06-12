@@ -65,10 +65,11 @@ class LM:
                 self.term_count_n_1[doc_id]['ngrams'][ngram_n_1] += 1
             else:
                 self.term_count_n_1[doc_id]['ngrams'][ngram_n_1] = 1
-            self.term_count_n_1[doc_id]['total'] += 1  
-            self.vocabulary.add(ngram_n)    
+            self.term_count_n_1[doc_id]['total'] += 1     
         
-    def add_doc(self, doc_id ='', doc_terms=[]): 
+    def add_doc(self, doc_id ='', doc_terms=[]):
+        for term in doc_terms: 
+            self.vocabulary.add(term)
         terms = self.lr_padding(doc_terms)
         ngrams = self.to_ngrams(terms)    
         self.update_counts(doc_id, ngrams)  
@@ -89,7 +90,16 @@ class LM:
             return -math.log(pr,logbase)
         else:
             return pr
-                
+    
+    def pr_doc(self, doc_id, log=True, logbase=2):
+        ''' This class may be overridden by implementers
+        ''' 
+        #print 'Old pr_doc()'
+        if log:
+            return 0
+        else:
+            return 1
+                        
     def calculate(self, doc_terms=[], actual_id=''):
         calculated = {
             'prob': -1,
@@ -104,6 +114,7 @@ class LM:
             for ngram in ngrams:
                 doc_pr += self.pr_ngram(doc_id, ngram, 
                         smooting='Laplace', log=True, logbase=2)
+            doc_pr += self.pr_doc(doc_id) 
             if self.verbose:            
                 print doc_id, actual_id, doc_pr  
             if calculated['prob'] == -1 or doc_pr < calculated['prob']:
