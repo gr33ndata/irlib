@@ -114,7 +114,8 @@ if __name__ == '__main__':
     
     
         
-    mx = MatrixExpress()
+    #mx = MatrixExpress()
+    mx = Matrix()
     mx.add_doc(doc_id='1',
                doc_terms=['apple', 'mac', 'iphone', 'mac'],
                doc_class= 'apple',
@@ -135,11 +136,21 @@ if __name__ == '__main__':
     print mx.vocabulary()
     for doc in mx.docs:
         print doc
+    
+    prune_map = [0] * len(mx.vocabulary())
+    prune_map[1] = 1
+    prune_map[2] = 1
+    prune_map[3] = 1
+    mx.prune(prune_map)
                
     mi = MI(mx)
     for term in mx.vocabulary():
         print term, mi[term]
-        
+    
+    print mx.vocabulary()
+    for doc in mx.docs:
+        print doc
+            
     #print mx.vocabulary()
     #print mi.terms_mi()
     

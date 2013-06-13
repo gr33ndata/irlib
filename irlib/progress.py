@@ -27,9 +27,13 @@ class Progress:
         ''' Call show whenever an item is processed,
             it will only display progress at percentages steps
         '''
+        # Don't show anything if very small step
+        if self.step < 1:
+            return
         self.count += 1
         if self.count % self.step:
             return 0
         else:
             print '%s %#3d %%' % (message, (self.count * self.percent) / self.step)
             return 1
+            
