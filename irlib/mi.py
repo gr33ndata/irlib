@@ -49,14 +49,8 @@ class MI:
             if doc['class'] == class_name:
                 count_term += float(doc['terms'][term_idx])
         return count_term / self.count_all
-        
-    def __getitem__(self, term):
-        ''' If term exists in terms, retruns its MI,
-            otherwise, return -1
-        '''    
-        term_idx = self.mx[term]
-        if term_idx == -1:
-            return -1
+    
+    def _term_mi(self, term_idx):
         term_mi = 0
         for class_name in self.count_classes:
             p_joint = self.pr_joint(term_idx,class_name)
@@ -74,16 +68,59 @@ class MI:
             #except:
             #    pass
         return term_mi
-              
+            
+    def __getitem__(self, term):
+        ''' If term exists in terms, retruns its MI,
+            otherwise, return -1
+        '''    
+        term_idx = self.mx[term]
+        if term_idx == -1:
+            return -1
+        return self._term_mi(term_idx)
+        
+    def terms_mi(self):
+        '''
+        Returns a list of MI according to terms order in Matrix
+        '''
+        mi_list = [0] * len(self.mx.vocabulary())
+        for term_idx in range(len(self.mx.vocabulary())):
+            mi_list[term_idx] = self._term_mi(term_idx)
+        return mi_list
+    
+    def cmp_mi_list(self, a, b):
+        if a['mi'] > b['mi']:
+            return  1
+        else:
+            return -1
+               
+    def terms_sorted(self):  
+        '''
+        Returns a list of terms sorted based on MI
+        '''
+        mi_list = []
+        term_idx = 0
+        for term in self.mx.vocabulary():
+            term_mi = self._term_mi(term_idx)
+            mi_list.append({
+                'id': term_idx,
+                'term': term,
+                'mi': term_mi
+            })
+            term_idx += 1
+        mi_list.sort(self.cmp_mi_list, reverse=True)    
+        return mi_list
+                          
 if __name__ == '__main__':
+    
+    
         
     mx = MatrixExpress()
     mx.add_doc(doc_id='1',
-               doc_terms=['apple', 'mac', 'iphone'],
+               doc_terms=['apple', 'mac', 'iphone', 'mac'],
                doc_class= 'apple',
                frequency=True, do_padding=True)
     mx.add_doc(doc_id='2',
-               doc_terms=['windows', 'word', 'excel'],
+               doc_terms=['windows', 'word', 'excel', 'office'],
                doc_class= 'microsoft',
                frequency=True, do_padding=True)
     mx.add_doc(doc_id='3',
@@ -91,10 +128,20 @@ if __name__ == '__main__':
                doc_class= 'apple',
                frequency=True, do_padding=True)
     mx.add_doc(doc_id='4',
-               doc_terms=['excel', 'computer', 'computer', 'office'],
+               doc_terms=['excel', 'computer', 'office', 'xp'],
                doc_class= 'microsoft',
                frequency=True, do_padding=True)
+    
+    print mx.vocabulary()
+    for doc in mx.docs:
+        print doc
                
     mi = MI(mx)
     for term in mx.vocabulary():
         print term, mi[term]
+        
+    #print mx.vocabulary()
+    #print mi.terms_mi()
+    
+    for item in mi.terms_sorted():
+        print item
