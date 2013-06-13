@@ -109,13 +109,22 @@ class MI:
             term_idx += 1
         mi_list.sort(self.cmp_mi_list, reverse=True)    
         return mi_list
+
+    def top_n_terms(self, n=100):
+        '''
+        Returns top n terms with highest MI
+        '''
+        top_list = []
+        for item in self.terms_sorted()[0:n]:
+           top_list.append(item['term'])
+        return top_list  
+                            
                           
 if __name__ == '__main__':
     
-    
         
-    #mx = MatrixExpress()
-    mx = Matrix()
+    mx = MatrixExpress()
+    #mx = Matrix()
     mx.add_doc(doc_id='1',
                doc_terms=['apple', 'mac', 'iphone', 'mac'],
                doc_class= 'apple',
@@ -138,9 +147,8 @@ if __name__ == '__main__':
         print doc
     
     prune_map = [0] * len(mx.vocabulary())
-    prune_map[1] = 1
-    prune_map[2] = 1
-    prune_map[3] = 1
+    for i in range(min(5, len(prune_map))):
+        prune_map[i] = 1
     mx.prune(prune_map)
                
     mi = MI(mx)
@@ -156,3 +164,5 @@ if __name__ == '__main__':
     
     for item in mi.terms_sorted():
         print item
+        
+        
