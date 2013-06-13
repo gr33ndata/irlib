@@ -298,6 +298,10 @@ class Matrix:
                     my_doc_terms.increment_after_padding(term_idx,1)
                 else:
                     my_doc_terms.insert_after_padding(term_idx,1)
+        # In the rare event when whitelisting causes an empty doc_terms list
+        # We add at least one zero in the list of my_doc_terms
+        if not my_doc_terms:
+            my_doc_terms = SuperList([float(0)])
         self.docs.append({  'id': doc_id, 
                             'class': doc_class, 
                             'terms': my_doc_terms})
