@@ -34,6 +34,8 @@ class LM:
         self.term_count_n_1 = {}
         # The vocabulary of all classes (for Laplace smoothing)
         self.vocabulary = set()
+        # All possible n-1 words, used for Laplace smoothing
+        self.n_1_vocabulary = 0
         self.lpad=lpad
         self.rpad=rpad
         self.joiner = joiner
@@ -96,7 +98,10 @@ class LM:
         add_denom = 0
         if smooting == 'Laplace':
             add_numer = 1
-            add_denom = len(self.vocabulary)
+            #add_denom = len(self.vocabulary)
+            if not self.n_1_vocabulary:
+                self.n_1_vocabulary = math.pow(len(self.vocabulary),self.n-1)
+            add_denom = self.n_1_vocabulary
         ngram_n = self.joiner.join(ngram)
         ngram_n_1 = self.joiner.join(ngram[:-1])
         pr = float(self.term_count_n[doc_id]['ngrams'].get(ngram_n,0) + add_numer) \
@@ -110,14 +115,27 @@ class LM:
     
     def pr_doc(self, doc_id, log=True, logbase=2):
         ''' This method may be overridden by implementers
+            Here we assume uniform Pr(doc) within Bayes rule
+            i.e. Pr(doc/string) = Pr(string/doc)
+            rather than Pr(doc/string) = Pr(string/doc) * Pr(doc)
         ''' 
-        #print 'Old pr_doc()'
         if log:
             return 0
         else:
             return 1
                         
     def calculate(self, doc_terms=[], actual_id=''):
+        '''
+        Given a set of terms, doc_terms
+        We find the doc in training data (calc_id),
+        whose LM is more likely to produce those terms
+        Then return the data structure calculated back
+        calculated{
+            prob: calculated probability Pr(calc_id/doc_terms)
+            calc_id: Document ID in training data.
+            actual_id: Just returned back as passed to us.
+        }  
+        ''' 
         calculated = {
             'prob': -1,
             'calc_id': '',
