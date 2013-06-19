@@ -70,7 +70,7 @@ class LM:
         '''
         Displays statistics about our LM
         '''
-        self.self.unseen_counts.display()
+        self.unseen_counts.display()
     
     def to_ngrams(self, terms):
         ''' Converts terms to all possibe ngrams 
