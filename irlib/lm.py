@@ -33,7 +33,7 @@ class UnseenTerms:
             unseen = self.counts[doc_id]['unseen'] 
             total = self.counts[doc_id]['unseen'] + self.counts[doc_id]['seen']
             unseen_ratio =  unseen * 1.0 / total
-            print 'Documdent:', doc_id
+            print 'Document:', doc_id
             print '\tUnseen ratio:', unseen_ratio 
     
     
