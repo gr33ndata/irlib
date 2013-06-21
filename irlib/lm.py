@@ -70,6 +70,9 @@ class LM:
         '''
         Displays statistics about our LM
         '''
+        for doc_id in self.term_count_n:
+            ngrams = len(self.term_count_n[doc_id]['ngrams'])
+            print 'n-Grams (doc %s): %d' % (str(doc_id), ngrams)
         self.unseen_counts.display()
     
     def to_ngrams(self, terms):
@@ -79,7 +82,7 @@ class LM:
         if len(terms) <= self.n:
             return terms
         if self.n == 1:
-            ngrams = [[term] for term in terms]
+            n_grams = [[term] for term in terms]
         else:
             n_grams = []
             for i in range(0,len(terms)-self.n+1):
