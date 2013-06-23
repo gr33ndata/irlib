@@ -34,13 +34,14 @@ class UnseenTerms:
             total = self.counts[doc_id]['unseen'] + self.counts[doc_id]['seen']
             unseen_ratio =  unseen * 1.0 / total
             print 'Document:', doc_id
-            print '\tUnseen ratio:', unseen_ratio 
+            print 'Unseen ratio:', unseen_ratio 
     
     
 class LM:
 
     
-    def __init__(self, n=3, lpad='', rpad='', laplace_gama=1, 
+    def __init__(self, n=3, lpad='', rpad='', 
+                 smoothing='Laplace', laplace_gama=1, 
                  verbose=False):
         '''
         Initialize our LM
@@ -61,6 +62,7 @@ class LM:
         self.vocabulary = set()
         self.lpad=lpad
         self.rpad=rpad
+        self.smoothing = smoothing
         self.laplace_gama = laplace_gama
         self.joiner = ' '
         self.unseen_counts = UnseenTerms()
@@ -138,19 +140,35 @@ class LM:
             v = len(self.term_count_n_1[doc_id]['ngrams'])
         add_denom = v * self.laplace_gama
         return float(x + add_numer) / float(y + add_denom)
-            
+    
+    def witten(self, count, n, t, log, new_doc):
+        self.return_unseen = True if new_doc else False
+        #print 'Witten (New Doc? %s)' %  new_doc 
+        #print 'W:', count, n, t
+        if count:
+            return float(count) / (n+t)
+        elif self.return_unseen:
+            return float(t) / (n+t)
+        elif log:
+            return 1
+        else:
+            return 1   
         
-    def pr_ngram(self, doc_id, ngram, smooting='Laplace', log=True, logbase=2):
+    def pr_ngram(self, doc_id, ngram, new_doc=False, log=True, logbase=2):
         ngram_n = self.joiner.join(ngram)
         ngram_n_1 = self.joiner.join(ngram[:-1])
         ngram_n_count = self.term_count_n[doc_id]['ngrams'].get(ngram_n,0)
         ngram_n_1_count = self.term_count_n_1[doc_id]['ngrams'].get(ngram_n_1,0)
         # Apply smoothing
-        if smooting == 'Laplace':
+        if self.smoothing == 'Laplace':
             pr = self.laplace(ngram_n_count, ngram_n_1_count, doc_id)
-        elif smooting == 'Witten':
-            # We need to implement this
-            pass
+        elif self.smoothing == 'Witten':
+            #print ngram_n, '-', ngram_n_1
+            wittenn = self.term_count_n[doc_id]['total']
+            #wittenn = ngram_n_1_count
+            wittent = len(self.term_count_n_1[doc_id]['ngrams'])
+            #wittent = len([key for key in self.term_count_n[doc_id]['ngrams'] if key.startswith(ngram_n_1)])
+            pr = self.witten(ngram_n_count, wittenn, wittent, log, new_doc)
         else:
             pr = float(ngram_n_count) / float(ngram_n_1_count)
         # Update seen/unseen counts
@@ -159,7 +177,7 @@ class LM:
         else:
             self.unseen_counts.update(doc_id=doc_id, unseen=True)
         if self.verbose:
-            print ngram, pr
+            print 'Pr(%s) = %s' % (ngram, pr)
         if log:
             return -math.log(pr,logbase)
         else:
@@ -198,9 +216,11 @@ class LM:
         for doc_id in self.term_count_n:
             #print '\n', doc_id, ':'
             doc_pr = 0
+            new_doc = True
             for ngram in ngrams:
                 doc_pr += self.pr_ngram(doc_id, ngram, 
-                        smooting='Laplace', log=True, logbase=2)
+                        new_doc=new_doc, log=True, logbase=2)
+                new_doc = False
             doc_pr += self.pr_doc(doc_id) 
             if self.verbose:            
                 print doc_id, actual_id, doc_pr  
@@ -215,13 +235,13 @@ if __name__ == '__main__':
 
     p = Preprocessor()
     
-    lm = LM(n=2, verbose=True)
+    lm = LM(n=2, verbose=True, smoothing='Witten')
     
     #print lm.to_ngrams(p.term2ch('hello dear world'))
     #sys.exit()
     
     #lm.add_doc(doc_id='apple', doc_terms=p.term2ch('i see glass of apple juice'))
-    lm.add_doc(doc_id='apple', doc_terms=p.term2ch('the tree is full of apples'))
+    lm.add_doc(doc_id='apple', doc_terms=p.term2ch('the tree is full or apples'))
     #lm.add_doc(doc_id='orange', doc_terms=p.term2ch('i see the orange tree shaking'))
     lm.add_doc(doc_id='orange', doc_terms=p.term2ch('orange orange juice'))
     #lm.add_doc(doc_id='orange', doc_terms=p.term2ch('i do not like jaffa cake'))
