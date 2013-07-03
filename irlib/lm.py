@@ -29,6 +29,7 @@ class UnseenTerms:
             self.counts[doc_id]['seen'] += 1
 
     def display(self):
+        #print '***!', self.counts
         for doc_id in self.counts:
             unseen = self.counts[doc_id]['unseen'] 
             total = self.counts[doc_id]['unseen'] + self.counts[doc_id]['seen']
@@ -41,7 +42,8 @@ class LM:
 
     
     def __init__(self, n=3, lpad='', rpad='', 
-                 smoothing='Laplace', laplace_gama=1, 
+                 smoothing='Laplace', laplace_gama=1,
+                 corpus_mix=0, 
                  verbose=False):
         '''
         Initialize our LM
@@ -50,7 +52,10 @@ class LM:
                     If empty string '', then don't pad, else
                     For each document read pad terms
                     with n-1 repitition on lpad and/or rpad
-        joiner: What to use to join ngrams, practically it doesn't matter
+        smoothing: 'Laplace' or 'Witten'
+        laplace_gama: Multiply 1 and V by this factor gamma
+        corpus_mix: 0 (default) only use document probabilites
+                  : otherwise use this value as 0 < lambda <= 1 
         '''
         self.n = n
         # Counters for joint probabilities
@@ -58,12 +63,16 @@ class LM:
         self.term_count_n = {}
         # Count for w_1, w_2, w_3 ... w_{n-1}
         self.term_count_n_1 = {}
+        # To be used in case of mixing doc prob with corpus prob.
+        self.corpus_count_n = {'ngrams': {}, 'total': 0} 
+        self.corpus_count_n_1 = {'ngrams': {}, 'total': 0}
         # The vocabulary of all classes (for Laplace smoothing)
         self.vocabulary = set()
         self.lpad=lpad
         self.rpad=rpad
         self.smoothing = smoothing
-        self.laplace_gama = laplace_gama
+        self.laplace_gama = float(laplace_gama)
+        self.corpus_mix = min(float(corpus_mix),1)
         self.joiner = ' '
         self.unseen_counts = UnseenTerms()
         self.verbose = verbose
@@ -75,6 +84,8 @@ class LM:
         for doc_id in self.term_count_n:
             ngrams = len(self.term_count_n[doc_id]['ngrams'])
             print 'n-Grams (doc %s): %d' % (str(doc_id), ngrams)
+            ngrams1 = len(self.term_count_n_1[doc_id]['ngrams'])
+            print '(n-1)-Grams (doc %s): %d' % (str(doc_id), ngrams1)
         self.unseen_counts.display()
     
     def to_ngrams(self, terms):
@@ -111,16 +122,31 @@ class LM:
             # ngram_n_1: ['t1','t2','t3']
             ngram_n = self.joiner.join(ngram)
             ngram_n_1 = self.joiner.join(ngram[:-1])
+            # Update n-gram counts for doc_id
             if ngram_n in self.term_count_n[doc_id]['ngrams']:
                 self.term_count_n[doc_id]['ngrams'][ngram_n] += 1
             else:
                 self.term_count_n[doc_id]['ngrams'][ngram_n] = 1
             self.term_count_n[doc_id]['total'] += 1
+            # Update n-gram counts for corpus
+            if ngram_n in self.corpus_count_n['ngrams']:
+                self.corpus_count_n['ngrams'][ngram_n] += 1
+            else:
+                self.corpus_count_n['ngrams'][ngram_n] = 1
+            self.corpus_count_n['total'] += 1
+            # Update (n-1)-gram counts for doc_id    
             if ngram_n_1 in self.term_count_n_1[doc_id]['ngrams']:
                 self.term_count_n_1[doc_id]['ngrams'][ngram_n_1] += 1
             else:
                 self.term_count_n_1[doc_id]['ngrams'][ngram_n_1] = 1
-            self.term_count_n_1[doc_id]['total'] += 1     
+            self.term_count_n_1[doc_id]['total'] += 1 
+            # Update (n-1)-gram counts for corpus
+            if ngram_n_1 in self.corpus_count_n_1['ngrams']:
+                self.corpus_count_n_1['ngrams'][ngram_n_1] += 1
+            else:
+                self.corpus_count_n_1['ngrams'][ngram_n_1] = 1
+            self.corpus_count_n_1['total'] += 1 
+   
         
     def add_doc(self, doc_id ='', doc_terms=[]):
         for term in doc_terms: 
@@ -137,7 +163,10 @@ class LM:
         elif laplace_mode == 'ch^n-1':
             v = math.pow(len(self.vocabulary),self.n-1)
         else:
-            v = len(self.term_count_n_1[doc_id]['ngrams'])
+            if doc_id:
+                v = len(self.term_count_n_1[doc_id]['ngrams'])
+            else:
+                v = len(self.corpus_count_n_1['ngrams'])
         add_denom = v * self.laplace_gama
         return float(x + add_numer) / float(y + add_denom)
     
@@ -159,29 +188,42 @@ class LM:
         ngram_n_1 = self.joiner.join(ngram[:-1])
         ngram_n_count = self.term_count_n[doc_id]['ngrams'].get(ngram_n,0)
         ngram_n_1_count = self.term_count_n_1[doc_id]['ngrams'].get(ngram_n_1,0)
+        corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
+        corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)
         # Apply smoothing
         if self.smoothing == 'Laplace':
             pr = self.laplace(ngram_n_count, ngram_n_1_count, doc_id)
+            if self.corpus_mix:
+                pr_corpus = self.laplace(corpus_ngram_n_count, 
+                                         corpus_ngram_n_1_count, 
+                                         doc_id='')
         elif self.smoothing == 'Witten':
             #print ngram_n, '-', ngram_n_1
-            wittenn = self.term_count_n[doc_id]['total']
-            #wittenn = ngram_n_1_count
-            wittent = len(self.term_count_n_1[doc_id]['ngrams'])
-            #wittent = len([key for key in self.term_count_n[doc_id]['ngrams'] if key.startswith(ngram_n_1)])
+            #wittenn = self.term_count_n[doc_id]['total']
+            wittenn = ngram_n_1_count
+            #wittent = len(self.term_count_n_1[doc_id]['ngrams']) 
+            wittent = len([key for key in self.term_count_n[doc_id]['ngrams'] if key.startswith(ngram_n_1)])
             pr = self.witten(ngram_n_count, wittenn, wittent, log, new_doc)
         else:
             pr = float(ngram_n_count) / float(ngram_n_1_count)
+            if self.corpus_mix:
+                pr_corpus = float(corpus_ngram_n_count) / float(corpus_ngram_n_1_count)
         # Update seen/unseen counts
         if ngram_n_count:    
             self.unseen_counts.update(doc_id=doc_id, unseen=False)
         else:
             self.unseen_counts.update(doc_id=doc_id, unseen=True)
-        if self.verbose:
-            print 'Pr(%s) = %s' % (ngram, pr)
-        if log:
-            return -math.log(pr,logbase)
+        # Shall we mix probability with corpus or not?
+        if self.corpus_mix:
+            pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
         else:
-            return pr
+            pr_mix = pr
+        if self.verbose:
+            print 'Pr(%s) = %s' % (ngram, pr_mix)
+        if log:
+            return -math.log(pr_mix,logbase)
+        else:
+            return pr_mix
     
     def pr_doc(self, doc_id, log=True, logbase=2):
         ''' This method may be overridden by implementers
@@ -235,7 +277,7 @@ if __name__ == '__main__':
 
     p = Preprocessor()
     
-    lm = LM(n=2, verbose=True, smoothing='Witten')
+    lm = LM(n=2, verbose=True, smoothing='Laplace', corpus_mix=0)
     
     #print lm.to_ngrams(p.term2ch('hello dear world'))
     #sys.exit()
@@ -247,7 +289,8 @@ if __name__ == '__main__':
     #lm.add_doc(doc_id='orange', doc_terms=p.term2ch('i do not like jaffa cake'))
     #lm.add_doc(doc_id='apple', doc_terms=p.term2ch('i have apple juice'))
     #print lm.pr
-    lm.calculate(doc_terms=p.term2ch('orango juice'))
+    result = lm.calculate(doc_terms=p.term2ch('orango juice'))
+    print result
     #print lm.term_count_n
     #print lm.term_count_n_1
     #print lm.vocabulary
