@@ -15,27 +15,60 @@ from preprocessor import Preprocessor
 class UnseenTerms:
 
     def __init__(self):
-        self.counts = {}
+        # Count unseen n-grams per each class
+        self.doc_counts = {}
+        # Count unseen n-grams per correct/incorrect results
+        self.cic_counts = {
+            'correct': {},
+            'incorrect': {}
+        }
+    
+    def _seen_unseel_label(self, seen, unseen):
+        label = '%0.2f' % (float(unseen) / (seen+unseen))
+        #label = str(unseen)
+        return label
         
-    def update(self, doc_id='', unseen=True):
-        if not doc_id in self.counts:
-            self.counts[doc_id] = {
+    def per_cic(self, calculated_id='', actual_id='', seen_unseen=None):
+        calculated_id = str(calculated_id).strip()
+        actual_id =str(actual_id).strip()
+        unseen_ratio_str = self._seen_unseel_label(*seen_unseen)
+        if calculated_id == actual_id:
+            cic_label = 'correct'
+        else:
+            cic_label = 'incorrect'
+        if unseen_ratio_str in self.cic_counts[cic_label]:
+            self.cic_counts[cic_label][unseen_ratio_str] += 1
+        else:
+            self.cic_counts[cic_label][unseen_ratio_str] = 1
+         
+         
+    def per_doc(self, doc_id='', seen_unseen=None):
+        if not doc_id in self.doc_counts:
+            self.doc_counts[doc_id] = {
                 'seen': 0,
                 'unseen': 0
-            }       
-        if unseen:
-            self.counts[doc_id]['unseen'] += 1
-        else:
-            self.counts[doc_id]['seen'] += 1
+            }  
+        self.doc_counts[doc_id]['seen'] += seen_unseen[0]    
+        self.doc_counts[doc_id]['unseen'] += seen_unseen[1]  
+        #if unseen:
+        #    self.cls_counts[doc_id]['unseen'] += 1
+        #else:
+        #    self.cls_counts[doc_id]['seen'] += 1
 
-    def display(self):
+    
+    def display(self, per_doc=True, per_cic=True):
         #print '***!', self.counts
-        for doc_id in self.counts:
-            unseen = self.counts[doc_id]['unseen'] 
-            total = self.counts[doc_id]['unseen'] + self.counts[doc_id]['seen']
-            unseen_ratio =  unseen * 1.0 / total
-            print 'Document:', doc_id
-            print 'Unseen ratio:', unseen_ratio 
+        if per_doc:
+            print '\nUnseen n-grams as per actual doc_ids'
+            for doc_id in self.doc_counts:
+                unseen = self.doc_counts[doc_id]['unseen'] 
+                total = self.doc_counts[doc_id]['unseen'] + self.doc_counts[doc_id]['seen']
+                unseen_ratio =  float(unseen) / total
+                print 'Ratio of unseen (%s): %0.4f' % (doc_id, unseen_ratio) 
+        if per_cic:
+            print ''
+            print 'Correct/Incorrect Unseen Ratios'
+            print self.cic_counts
     
     
 class LM:
@@ -209,10 +242,10 @@ class LM:
             if self.corpus_mix:
                 pr_corpus = float(corpus_ngram_n_count) / float(corpus_ngram_n_1_count)
         # Update seen/unseen counts
-        if ngram_n_count:    
-            self.unseen_counts.update(doc_id=doc_id, unseen=False)
+        if ngram_n_count:
+            seen = True    
         else:
-            self.unseen_counts.update(doc_id=doc_id, unseen=True)
+            seen = False
         # Shall we mix probability with corpus or not?
         if self.corpus_mix:
             pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
@@ -221,9 +254,9 @@ class LM:
         if self.verbose:
             print 'Pr(%s) = %s' % (ngram, pr_mix)
         if log:
-            return -math.log(pr_mix,logbase)
+            return (-math.log(pr_mix,logbase),seen)
         else:
-            return pr_mix
+            return (pr_mix,seen)
     
     def pr_doc(self, doc_id, log=True, logbase=2):
         ''' This method may be overridden by implementers
@@ -251,24 +284,38 @@ class LM:
         calculated = {
             'prob': -1,
             'calc_id': '',
-            'actual_id': actual_id
+            'actual_id': actual_id,
+            'seen_unseen_count': (0,0)
         }
         terms = self.lr_padding(doc_terms)
-        ngrams = self.to_ngrams(terms)  
+        ngrams = self.to_ngrams(terms) 
         for doc_id in self.term_count_n:
             #print '\n', doc_id, ':'
             doc_pr = 0
             new_doc = True
+            seen_count = 0
+            unseen_count = 0
             for ngram in ngrams:
-                doc_pr += self.pr_ngram(doc_id, ngram, 
+                (ngram_pr, ngram_seen) = self.pr_ngram(doc_id, ngram, 
                         new_doc=new_doc, log=True, logbase=2)
+                doc_pr += ngram_pr
                 new_doc = False
+                if ngram_seen:
+                    seen_count += 1
+                else:
+                    unseen_count += 1
             doc_pr += self.pr_doc(doc_id) 
             if self.verbose:            
                 print doc_id, actual_id, doc_pr  
             if calculated['prob'] == -1 or doc_pr < calculated['prob']:
                 calculated['prob'] = doc_pr
                 calculated['calc_id'] = doc_id
+                calculated['seen_unseen_count'] = (seen_count, unseen_count)
+        self.unseen_counts.per_doc(doc_id=calculated['actual_id'], 
+            seen_unseen=calculated['seen_unseen_count'])
+        self.unseen_counts.per_cic(calculated_id=calculated['calc_id'], 
+            actual_id=calculated['actual_id'],
+            seen_unseen=calculated['seen_unseen_count'])
         return calculated     
             
                 
