@@ -18,10 +18,7 @@ class UnseenTerms:
         # Count unseen n-grams per each class
         self.doc_counts = {}
         # Count unseen n-grams per correct/incorrect results
-        self.cic_counts = {
-            'correct': {},
-            'incorrect': {}
-        }
+        self.cic_counts = {}
     
     def _seen_unseel_label(self, seen, unseen):
         label = '%0.2f' % (float(unseen) / (seen+unseen))
@@ -32,14 +29,12 @@ class UnseenTerms:
         calculated_id = str(calculated_id).strip()
         actual_id =str(actual_id).strip()
         unseen_ratio_str = self._seen_unseel_label(*seen_unseen)
+        if not unseen_ratio_str in self.cic_counts:
+            self.cic_counts[unseen_ratio_str] = [0,0]
         if calculated_id == actual_id:
-            cic_label = 'correct'
+            self.cic_counts[unseen_ratio_str][0] += 1
         else:
-            cic_label = 'incorrect'
-        if unseen_ratio_str in self.cic_counts[cic_label]:
-            self.cic_counts[cic_label][unseen_ratio_str] += 1
-        else:
-            self.cic_counts[cic_label][unseen_ratio_str] = 1
+            self.cic_counts[unseen_ratio_str][1] += 1
          
          
     def per_doc(self, doc_id='', seen_unseen=None):
@@ -60,7 +55,9 @@ class UnseenTerms:
         #print '***!', self.counts
         if per_doc:
             print '\nUnseen n-grams as per actual doc_ids'
-            for doc_id in self.doc_counts:
+            doc_ids = self.doc_counts.keys()
+            doc_ids.sort()
+            for doc_id in doc_ids:
                 unseen = self.doc_counts[doc_id]['unseen'] 
                 total = self.doc_counts[doc_id]['unseen'] + self.doc_counts[doc_id]['seen']
                 unseen_ratio =  float(unseen) / total
@@ -68,8 +65,18 @@ class UnseenTerms:
         if per_cic:
             print ''
             print 'Correct/Incorrect Unseen Ratios'
-            print self.cic_counts
-    
+            cic_x = []
+            correct = []
+            incorrect = []
+            cic_labels = self.cic_counts.keys()
+            cic_labels.sort()
+            for label in cic_labels:
+                cic_x.append(str(label))
+                correct.append(str(self.cic_counts[label][0]))
+                incorrect.append(str(self.cic_counts[label][1]))
+            print 'CIC X = [' + ','.join(cic_x) + ']'
+            print 'Correct   = [' + ','.join(correct) + ']'
+            print 'Incorrect = [' + ','.join(incorrect) + ']'
     
 class LM:
 
@@ -88,7 +95,8 @@ class LM:
         smoothing: 'Laplace' or 'Witten'
         laplace_gama: Multiply 1 and V by this factor gamma
         corpus_mix: 0 (default) only use document probabilites
-                  : otherwise use this value as 0 < lambda <= 1 
+                  : or value between 0 and 1 lambda
+                  : or s for Robertson and Sparck-Jones Model*
         '''
         self.n = n
         # Counters for joint probabilities
@@ -105,7 +113,10 @@ class LM:
         self.rpad=rpad
         self.smoothing = smoothing
         self.laplace_gama = float(laplace_gama)
-        self.corpus_mix = min(float(corpus_mix),1)
+        if not type(corpus_mix) is str:
+            self.corpus_mix = min(float(corpus_mix),1)
+        else:
+            self.corpus_mix = corpus_mix
         self.joiner = ' '
         self.unseen_counts = UnseenTerms()
         self.verbose = verbose
@@ -226,10 +237,18 @@ class LM:
         # Apply smoothing
         if self.smoothing == 'Laplace':
             pr = self.laplace(ngram_n_count, ngram_n_1_count, doc_id)
-            if self.corpus_mix:
+            if self.corpus_mix == 's':
+                pr_dash = self.laplace(corpus_ngram_n_count - ngram_n_count,
+                                  corpus_ngram_n_1_count - ngram_n_1_count,
+                                  doc_id='')
+                pr_mix = (float(pr) * (1-pr_dash)) / (float(pr_dash) * (1-pr))     
+            elif type(float(self.corpus_mix)) is float and self.corpus_mix > 0:  
                 pr_corpus = self.laplace(corpus_ngram_n_count, 
                                          corpus_ngram_n_1_count, 
                                          doc_id='')
+                pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
+            else:
+                pr_mix = pr
         elif self.smoothing == 'Witten':
             #print ngram_n, '-', ngram_n_1
             #wittenn = self.term_count_n[doc_id]['total']
@@ -237,22 +256,30 @@ class LM:
             #wittent = len(self.term_count_n_1[doc_id]['ngrams']) 
             wittent = len([key for key in self.term_count_n[doc_id]['ngrams'] if key.startswith(ngram_n_1)])
             pr = self.witten(ngram_n_count, wittenn, wittent, log, new_doc)
+            pr_mix = pr
         else:
             pr = float(ngram_n_count) / float(ngram_n_1_count)
-            if self.corpus_mix:
+            if self.corpus_mix == 's':
+                pr_dash = float(corpus_ngram_n_count - ngram_n_count) / float(corpus_ngram_n_1_count - ngram_n_1_count)
+                pr_mix = (float(pr) * (1-pr_dash)) / (float(pr_dash) * (1-pr))     
+            elif type(float(self.corpus_mix)) is float and self.corpus_mix > 0:  
                 pr_corpus = float(corpus_ngram_n_count) / float(corpus_ngram_n_1_count)
+                pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
+            else:
+                pr_mix = pr
+                
         # Update seen/unseen counts
         if ngram_n_count:
             seen = True    
         else:
             seen = False
         # Shall we mix probability with corpus or not?
-        if self.corpus_mix:
-            pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
-        else:
-            pr_mix = pr
-        if self.verbose:
-            print 'Pr(%s) = %s' % (ngram, pr_mix)
+        #if self.corpus_mix:
+        #    pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
+        #else:
+        #    pr_mix = pr
+        #if self.verbose:
+        #    print 'Pr(%s) = %s' % (ngram, pr_mix)
         if log:
             return (-math.log(pr_mix,logbase),seen)
         else:
