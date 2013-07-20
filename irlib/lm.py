@@ -83,7 +83,7 @@ class LM:
     
     def __init__(self, n=3, lpad='', rpad='', 
                  smoothing='Laplace', laplace_gama=1,
-                 corpus_mix=0, 
+                 corpus_mix=0, corpus_mode='Miller',
                  verbose=False):
         '''
         Initialize our LM
@@ -96,9 +96,13 @@ class LM:
         laplace_gama: Multiply 1 and V by this factor gamma
         corpus_mix: 0 (default) only use document probabilites
                   : or value between 0 and 1 lambda
-                  : or s for Robertson and Sparck-Jones Model*
+                  : or s for Robertson and Sparck-Jones Model
+                  : or c for Croft et al Model
+        corpus_mode: 'Hiemstra' or 'Miller'
+                   : This tell us how to calculate pr_corpus(t)
         '''
         self.n = n
+        #(self.n, self.m) = n if type(n) == tuble else (n,0)
         # Counters for joint probabilities
         # Count for w_1, w_2, w_3 ... w_{n-1}, w_n
         self.term_count_n = {}
@@ -117,6 +121,7 @@ class LM:
             self.corpus_mix = min(float(corpus_mix),1)
         else:
             self.corpus_mix = corpus_mix
+        self.corpus_mode = corpus_mode
         self.joiner = ' '
         self.unseen_counts = UnseenTerms()
         self.verbose = verbose
@@ -147,6 +152,11 @@ class LM:
         return n_grams
     
     def lr_padding(self, terms):
+        '''
+        Pad doc from the left and right before adding,
+        depending on what's in self.lpad and self.rpad
+        If any of them is '', then don't pad there. 
+        '''
         lpad = rpad = []
         if self.lpad:
             lpad = [self.lpad] * (self.n - 1) 
@@ -193,6 +203,12 @@ class LM:
    
         
     def add_doc(self, doc_id ='', doc_terms=[]):
+        '''
+        Add new document to our Language Model (training phase)
+        doc_id is used here, so we build seperate LF for each doc_id
+        I.e. if you call it more than once with same doc_id,
+        then all terms given via doc_terms will contribute to same LM
+        '''
         for term in doc_terms: 
             self.vocabulary.add(term)
         terms = self.lr_padding(doc_terms)
@@ -232,20 +248,25 @@ class LM:
         ngram_n_1 = self.joiner.join(ngram[:-1])
         ngram_n_count = self.term_count_n[doc_id]['ngrams'].get(ngram_n,0)
         ngram_n_1_count = self.term_count_n_1[doc_id]['ngrams'].get(ngram_n_1,0)
-        corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
-        corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)
         # Apply smoothing
         if self.smoothing == 'Laplace':
             pr = self.laplace(ngram_n_count, ngram_n_1_count, doc_id)
             if self.corpus_mix == 's':
+                corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
+                corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)
+                #pr_dash = self.laplace(corpus_ngram_n_count - ngram_n_count,
+                #                  corpus_ngram_n_1_count - ngram_n_1_count,
+                #                  doc_id='')
+                #pr_mix = (float(pr) * (1-pr_dash)) / (float(pr_dash) * (1-pr))
+                s_gamma = 0.5
+                pr_mix = ((ngram_n_count + s_gamma) * (corpus_ngram_n_1_count - ngram_n_1_count - corpus_ngram_n_count + ngram_n_count + s_gamma)) / ((ngram_n_1_count - ngram_n_count + s_gamma) * (corpus_ngram_n_count - ngram_n_count + s_gamma))   
+            elif self.corpus_mix == 'c':
                 pr_dash = self.laplace(corpus_ngram_n_count - ngram_n_count,
                                   corpus_ngram_n_1_count - ngram_n_1_count,
                                   doc_id='')
-                pr_mix = (float(pr) * (1-pr_dash)) / (float(pr_dash) * (1-pr))     
+                pr_mix = float(pr) / float(pr_dash)   
             elif type(float(self.corpus_mix)) is float and self.corpus_mix > 0:  
-                pr_corpus = self.laplace(corpus_ngram_n_count, 
-                                         corpus_ngram_n_1_count, 
-                                         doc_id='')
+                pr_corpus = self.pr_corpus(ngram_n, ngram_n_1)
                 pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
             else:
                 pr_mix = pr
@@ -260,10 +281,12 @@ class LM:
         else:
             pr = float(ngram_n_count) / float(ngram_n_1_count)
             if self.corpus_mix == 's':
+                corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
+                corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)
                 pr_dash = float(corpus_ngram_n_count - ngram_n_count) / float(corpus_ngram_n_1_count - ngram_n_1_count)
                 pr_mix = (float(pr) * (1-pr_dash)) / (float(pr_dash) * (1-pr))     
             elif type(float(self.corpus_mix)) is float and self.corpus_mix > 0:  
-                pr_corpus = float(corpus_ngram_n_count) / float(corpus_ngram_n_1_count)
+                pr_corpus = self.pr_corpus(ngram_n, ngram_n_1)
                 pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
             else:
                 pr_mix = pr
@@ -285,6 +308,23 @@ class LM:
         else:
             return (pr_mix,seen)
     
+    def pr_corpus(self, ngram_n, ngram_n_1):
+        if self.corpus_mode == 'Hiemstra':
+            df = 0
+            df_total = 0
+            for doc_id in self.term_count_n_1:
+                if self.term_count_n[doc_id]['ngrams'].get(ngram_n,0):
+                    df += 1
+                df_total += 1
+            pr = float(df) / float(df_total)
+        else:
+            corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
+            corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)
+            pr = self.laplace(corpus_ngram_n_count, 
+                              corpus_ngram_n_1_count, 
+                              doc_id='')
+        return pr
+            
     def pr_doc(self, doc_id, log=True, logbase=2):
         ''' This method may be overridden by implementers
             Here we assume uniform Pr(doc) within Bayes rule
@@ -368,4 +408,5 @@ if __name__ == '__main__':
     #print lm.term_count_n
     #print lm.term_count_n_1
     #print lm.vocabulary
+ 
     
