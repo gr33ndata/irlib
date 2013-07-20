@@ -261,6 +261,8 @@ class LM:
                 s_gamma = 0.5
                 pr_mix = ((ngram_n_count + s_gamma) * (corpus_ngram_n_1_count - ngram_n_1_count - corpus_ngram_n_count + ngram_n_count + s_gamma)) / ((ngram_n_1_count - ngram_n_count + s_gamma) * (corpus_ngram_n_count - ngram_n_count + s_gamma))   
             elif self.corpus_mix == 'c':
+                corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
+                corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)
                 pr_dash = self.laplace(corpus_ngram_n_count - ngram_n_count,
                                   corpus_ngram_n_1_count - ngram_n_1_count,
                                   doc_id='')
@@ -296,13 +298,6 @@ class LM:
             seen = True    
         else:
             seen = False
-        # Shall we mix probability with corpus or not?
-        #if self.corpus_mix:
-        #    pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
-        #else:
-        #    pr_mix = pr
-        #if self.verbose:
-        #    print 'Pr(%s) = %s' % (ngram, pr_mix)
         if log:
             return (-math.log(pr_mix,logbase),seen)
         else:
@@ -317,6 +312,8 @@ class LM:
                     df += 1
                 df_total += 1
             pr = float(df) / float(df_total)
+            if not pr:
+                pr += 0.0001
         else:
             corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
             corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)

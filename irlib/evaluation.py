@@ -70,11 +70,24 @@ class Evaluation:
         val = self.fp(class_id) \
            / (self.fp(class_id) + self.tn(class_id))   
         return val
-              
+    
+    def overall_accuracy(self, percent=True):
+        correct = 0
+        incorrect = 0
+        for class_id in self.ev_results:
+            correct += self.ev_results[class_id]['TP'] 
+            incorrect += self.ev_results[class_id]['FP']
+        total = correct + incorrect 
+        acc = float(correct) / total
+        if percent:
+            acc = acc * 100
+        return acc      
+         
     def printev(self):
         for target_class in self.get_classes_labels():
             print target_class, \
                 'TP-rate', self.tp_rate(target_class), \
                 'FP-rate', self.fp_rate(target_class)
+        print self.overall_accuracy()
                 
                 
