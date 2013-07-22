@@ -77,8 +77,7 @@ class Evaluation:
         for class_id in self.ev_results:
             correct += self.ev_results[class_id]['TP'] 
             incorrect += self.ev_results[class_id]['FP']
-        total = correct + incorrect 
-        acc = float(correct) / total
+        acc = float(correct) / (correct + incorrect)
         if percent:
             acc = acc * 100
         return acc      
