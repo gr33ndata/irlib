@@ -70,7 +70,40 @@ class Evaluation:
         val = self.fp(class_id) \
            / (self.fp(class_id) + self.tn(class_id))   
         return val
+        
+    def precision(self, class_id):
+        if not self.fp(class_id):
+            return 1
+        val = self.tp(class_id) \
+                / (self.tp(class_id) + self.fp(class_id))
+        return val
+        
+    def recall(self, class_id):
+        # Note: Same as TP rate
+        return self.tp_rate(class_id)
+        
+    def f1score(self, class_id):
+        #P = self.precision(class_id)
+        #R = self.recall(class_id)
+        #print 'P-R:', P, R
+        #f1 = (2 * P * R) / (P + R)
+        TP = self.tp(class_id)
+        FP = self.fp(class_id)
+        FN = self.fn(class_id)
+        f1 = float(2*TP) / ((2*TP) + FP + FN)
+        return f1   
     
+    def macro_f1(self, percent=True):
+        # Returns Average F1-Score
+        f1 = w = 0
+        for class_id in self.ev_results:
+            w += 1
+            f1 += self.f1score(class_id) 
+        avg = float(f1)/w
+        if percent:
+            avg = avg * 100
+        return avg  
+           
     def overall_accuracy(self, percent=True):
         correct = 0
         incorrect = 0

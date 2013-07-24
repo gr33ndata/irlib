@@ -130,12 +130,54 @@ class LM:
         '''
         Displays statistics about our LM
         '''
-        for doc_id in self.term_count_n:
+        voc_list = []
+        doc_ids = self.term_count_n.keys()
+        doc_ids.sort()
+        for doc_id in doc_ids:
             ngrams = len(self.term_count_n[doc_id]['ngrams'])
             print 'n-Grams (doc %s): %d' % (str(doc_id), ngrams)
             ngrams1 = len(self.term_count_n_1[doc_id]['ngrams'])
             print '(n-1)-Grams (doc %s): %d' % (str(doc_id), ngrams1)
+            voc_list.append(ngrams)
+        print 'Classed Vocabularies:', voc_list
+        print ''
+        corpus_ngrams = len(self.corpus_count_n['ngrams']) 
+        print 'n-Grams (collection): %d' % (corpus_ngrams)
+        corpus_ngrams1 = len(self.corpus_count_n_1['ngrams']) 
+        print '(n-1)-Grams (collection): %d' % (corpus_ngrams1)
         self.unseen_counts.display()
+        # Display overlapping n-grams between classes
+        #self.overlaps()
+        
+    def overlaps(self):
+        omx = []
+        doc_ids = self.term_count_n.keys()
+        doc_ids.sort()
+        for doc_id in doc_ids:
+            row = [0] * len(doc_ids)
+            omx.append(row)
+        for i in range(len(doc_ids)):
+            doc_id_i = doc_ids[i]
+            ngrams = len(self.term_count_n[doc_id_i]['ngrams'])
+            omx[i][i] = ngrams
+            for j in range(i):
+                doc_id_j = doc_ids[j]
+                ongrams = 0
+                #for ngram in self.term_count_n[doc_id_j]['ngrams']:
+                for ngram in self.term_count_n[doc_id_i]['ngrams']:
+                    #if ngram in self.term_count_n[doc_id_i]['ngrams']:
+                    if ngram in self.term_count_n[doc_id_j]['ngrams']:
+                        ongrams += 1
+                    omx[i][j] = 0 #ongrams
+                    omx[j][i] = ongrams
+        print '\nn-gram overlaps:'
+        print doc_ids            
+        for i in range(len(omx)):
+            row = []
+            for j in range(len(omx[i])):
+                row.append( round( float(omx[i][j] * 100) / omx[i][i],2 ) )
+                #row.append(omx[i][j])
+            print row
     
     def to_ngrams(self, terms):
         ''' Converts terms to all possibe ngrams 
