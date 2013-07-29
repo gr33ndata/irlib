@@ -13,8 +13,22 @@ from progress import Progress
 from preprocessor import Preprocessor
 from matrix import Matrix
 from matrixexpress import MatrixExpress
+from lm import LM
 
-class MI:
+class MI(object):
+
+    def __new__(cls, obj=None, verbose=False):
+    
+        super(MI, cls).__new__(cls)
+        if isinstance(obj, Matrix):
+            return MI_MX(mx=obj, verbose=verbose)
+        elif isinstance(obj, LM):
+            pass
+        else:
+            pass
+
+
+class MI_MX:
 
     def __init__(self, mx=None, verbose=False):
         self.mx = mx
@@ -152,6 +166,7 @@ if __name__ == '__main__':
     mx.prune(prune_map)
                
     mi = MI(mx)
+    print type(mi)
     for term in mx.vocabulary():
         print term, mi[term]
     

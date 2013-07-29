@@ -87,7 +87,7 @@ class LM:
                  verbose=False):
         '''
         Initialize our LM
-        n: Pur LM's ngram, e.g. for bigram LM, n=2
+        n: Order of ngram LM, e.g. for bigram LM, n=2
         lpad, rpad: Left and right padding. 
                     If empty string '', then don't pad, else
                     For each document read pad terms
@@ -96,8 +96,7 @@ class LM:
         laplace_gama: Multiply 1 and V by this factor gamma
         corpus_mix: 0 (default) only use document probabilites
                   : or value between 0 and 1 lambda
-                  : or s for Robertson and Sparck-Jones Model
-                  : or c for Croft et al Model
+                  : or c (or l) for Log-likelihood Odds model (Cooper LDA)
         corpus_mode: 'Hiemstra' or 'Miller'
                    : This tell us how to calculate pr_corpus(t)
         '''
@@ -293,16 +292,7 @@ class LM:
         # Apply smoothing
         if self.smoothing == 'Laplace':
             pr = self.laplace(ngram_n_count, ngram_n_1_count, doc_id)
-            if self.corpus_mix == 's':
-                corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
-                corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)
-                #pr_dash = self.laplace(corpus_ngram_n_count - ngram_n_count,
-                #                  corpus_ngram_n_1_count - ngram_n_1_count,
-                #                  doc_id='')
-                #pr_mix = (float(pr) * (1-pr_dash)) / (float(pr_dash) * (1-pr))
-                s_gamma = 0.5
-                pr_mix = ((ngram_n_count + s_gamma) * (corpus_ngram_n_1_count - ngram_n_1_count - corpus_ngram_n_count + ngram_n_count + s_gamma)) / ((ngram_n_1_count - ngram_n_count + s_gamma) * (corpus_ngram_n_count - ngram_n_count + s_gamma))   
-            elif self.corpus_mix == 'c':
+            if self.corpus_mix == 'c' or self.corpus_mix == 'l':
                 corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
                 corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)
                 pr_dash = self.laplace(corpus_ngram_n_count - ngram_n_count,
@@ -315,21 +305,13 @@ class LM:
             else:
                 pr_mix = pr
         elif self.smoothing == 'Witten':
-            #print ngram_n, '-', ngram_n_1
-            #wittenn = self.term_count_n[doc_id]['total']
             wittenn = ngram_n_1_count
-            #wittent = len(self.term_count_n_1[doc_id]['ngrams']) 
             wittent = len([key for key in self.term_count_n[doc_id]['ngrams'] if key.startswith(ngram_n_1)])
             pr = self.witten(ngram_n_count, wittenn, wittent, log, new_doc)
             pr_mix = pr
         else:
             pr = float(ngram_n_count) / float(ngram_n_1_count)
-            if self.corpus_mix == 's':
-                corpus_ngram_n_count = self.corpus_count_n['ngrams'].get(ngram_n,0)
-                corpus_ngram_n_1_count = self.corpus_count_n_1['ngrams'].get(ngram_n_1,0)
-                pr_dash = float(corpus_ngram_n_count - ngram_n_count) / float(corpus_ngram_n_1_count - ngram_n_1_count)
-                pr_mix = (float(pr) * (1-pr_dash)) / (float(pr_dash) * (1-pr))     
-            elif type(float(self.corpus_mix)) is float and self.corpus_mix > 0:  
+            if type(float(self.corpus_mix)) is float and self.corpus_mix > 0:  
                 pr_corpus = self.pr_corpus(ngram_n, ngram_n_1)
                 pr_mix = self.corpus_mix * pr_corpus + (1 - self.corpus_mix) * pr
             else:
