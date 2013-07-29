@@ -99,6 +99,8 @@ class LM:
                   : or c (or l) for Log-likelihood Odds model (Cooper LDA)
         corpus_mode: 'Hiemstra' or 'Miller'
                    : This tell us how to calculate pr_corpus(t)
+                   : In fact, 'Hiemstra' makes sense only with Multivaria LM
+                   : Whereas the LM here is Multinomial. 
         '''
         self.n = n
         #(self.n, self.m) = n if type(n) == tuble else (n,0)
