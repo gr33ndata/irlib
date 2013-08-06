@@ -21,7 +21,10 @@ class UnseenTerms:
         self.cic_counts = {}
     
     def _seen_unseel_label(self, seen, unseen):
-        label = '%0.2f' % (float(unseen) / (seen+unseen))
+        if seen + unseen:
+            label = '%0.2f' % (float(unseen) / (seen+unseen))
+        else:
+            label = '%0.2f' %  0
         #label = str(unseen)
         return label
         
@@ -103,7 +106,7 @@ class LM:
                    : Whereas the LM here is Multinomial. 
         '''
         self.n = n
-        #(self.n, self.m) = n if type(n) == tuble else (n,0)
+        #(self.n, self.m) = n if type(n) == tuple else (n,0)
         # Counters for joint probabilities
         # Count for w_1, w_2, w_3 ... w_{n-1}, w_n
         self.term_count_n = {}

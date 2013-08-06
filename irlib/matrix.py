@@ -340,6 +340,9 @@ class Matrix:
     def get_stats(self):
         return Stats(self)
 
+
+
+
 '''
 classes = {
     'class1': {'terms': [1,2,0,3], 'totel': 6}
