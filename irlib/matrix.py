@@ -259,17 +259,33 @@ class Matrix:
         #for cls in self.classes:
         #    self.classes[cls].expand(new_len=len(self.terms))
 
+    def _log_tf(self, value):
+		val = float(value)
+		val = 1 + math.log10(val) if val != 0 else float(0)
+		return val
+		
     def tf_idf(self, do_idf=True):
         ''' Converts matrix to tf.idf values
             do_idf: if False, convert to tf only
-        '''
-        N = len(self)
+        '''        
+        N = len(self.docs)
+        df = SuperList([0] * len(self.terms))
         for doc in self.docs:
-            for idx in range(len(doc)):
-                df = self[self.terms[idx]].nonzero_count()
-                tf = log_tf(doc['terms'][idx])
-                idf = float(N) / df if do_idf else 1 
-                doc['terms'][idx] = tf * idf
+            row = SuperList([0] * len(self.terms))
+            for idx in range(len(self.terms)):
+                if doc['terms'][idx] > 0:
+                    row[idx] = 1
+            df.add(row)
+        
+        for doc in self.docs:
+            for idx in range(len(self.terms)):
+                tf = self._log_tf(doc['terms'][idx])
+                idf = math.log10(float(N) / df[idx])
+                if do_idf:
+                    doc['terms'][idx] = tf * idf
+                else:
+                    doc['terms'][idx] = tf
+
  
     def add_doc(self, doc_id = '', doc_class='', doc_terms=[], 
                 frequency=False, do_padding=False):

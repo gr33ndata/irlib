@@ -69,16 +69,19 @@ if __name__ == '__main__':
     print 'Matrix'   
     print mx.vocabulary()
     for doc in mx.docs:
-        print doc['terms']   
+        print doc['terms']  
+    #print mx 
         
     mxcc = MatrixCooccurrence(mx)
     print 'MatrixCooccurrence'   
     print mxcc.vocabulary()
     for doc in mxcc.docs:
-        print doc['class'], doc['terms']   
+        print doc['id'], doc['terms']
+    #print mxcc   
         
     print 'MatrixCooccurrence (Normalized)' 
-    mxcc.normalize()  
+    #mxcc.normalize()
+    mxcc.tf_idf(do_idf=True)  
     print mxcc.vocabulary()
     for doc in mxcc.docs:
-        print doc['class'], doc['terms']    
+        print doc['id'], doc['terms']    
