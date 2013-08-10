@@ -115,6 +115,7 @@ class LM:
         # To be used in case of mixing doc prob with corpus prob.
         self.corpus_count_n = {'ngrams': {}, 'total': 0} 
         self.corpus_count_n_1 = {'ngrams': {}, 'total': 0}
+        self.doc_lengths = {}
         # The vocabulary of all classes (for Laplace smoothing)
         self.vocabulary = set()
         self.lpad=lpad
@@ -152,7 +153,25 @@ class LM:
         self.unseen_counts.display()
         # Display overlapping n-grams between classes
         #self.overlaps()
-        
+    
+    def get_ngram_counts(self):
+        ''' Returns a list of n-gram counts
+            Array of classes counts and last item is for corpus
+        '''
+        ngram_counts = {
+            'classes': [],
+            'corpus': 0
+        }
+        doc_ids = self.term_count_n.keys()
+        doc_ids.sort()
+        for doc_id in doc_ids:
+            print self.term_count_n[doc_id]
+            class_ngrams = len(self.term_count_n[doc_id]['ngrams'])
+            ngram_counts['classes'].append(class_ngrams)
+        corpus_ngrams = len(self.corpus_count_n['ngrams'])
+        ngram_counts['corpus'] = corpus_ngrams
+        return ngram_counts   
+            
     def overlaps(self):
         omx = []
         doc_ids = self.term_count_n.keys()
@@ -247,14 +266,42 @@ class LM:
                 self.corpus_count_n_1['ngrams'][ngram_n_1] = 1
             self.corpus_count_n_1['total'] += 1 
    
+    def update_lengths(self, doc_id ='', doc_length=0):
+        if not doc_id in self.doc_lengths:
+            self.doc_lengths[doc_id] = {'lengths': [], 'mean': -1}
+        self.doc_lengths[doc_id]['lengths'].append(int(doc_length))
         
-    def add_doc(self, doc_id ='', doc_terms=[]):
+    def get_mean_lengths(self, doc_id =''):
+        my_mean_len = 0
+        others_mean_len = []
+        for d_id in self.doc_lengths:  
+            if self.doc_lengths[d_id]['mean'] == -1:
+                dlen = self.doc_lengths[d_id]['lengths']
+                doc_mean_len = float(sum(dlen)) / len(dlen)
+                self.doc_lengths[d_id]['mean'] = doc_mean_len
+            else:
+                doc_mean_len = self.doc_lengths[d_id]['mean']
+            if d_id == doc_id:
+                my_mean_len = doc_mean_len
+            else:
+                others_mean_len.append(doc_mean_len)      
+        oth_mean_len = float(sum(others_mean_len)) / len(others_mean_len)
+        return (my_mean_len, oth_mean_len)
+                
+    def add_doc(self, doc_id ='', doc_terms=[], doc_length=-1):
         '''
         Add new document to our Language Model (training phase)
         doc_id is used here, so we build seperate LF for each doc_id
         I.e. if you call it more than once with same doc_id,
         then all terms given via doc_terms will contribute to same LM
+        doc_terms: list of words in document to be added 
+        doc_length: the length of the document, you can provide it yourself,
+                    otherwise, we use len(doc_terms) instead.
         '''
+        if doc_length == -1:
+            self.update_lengths(doc_id=doc_id, doc_length=len(doc_terms))
+        else:
+            self.update_lengths(doc_id=doc_id, doc_length=int(doc_length)) 
         for term in doc_terms: 
             self.vocabulary.add(term)
         terms = self.lr_padding(doc_terms)
@@ -289,7 +336,7 @@ class LM:
         else:
             return 1   
         
-    def pr_ngram(self, doc_id, ngram, new_doc=False, log=True, logbase=2):
+    def pr_ngram(self, doc_id, ngram, new_doc=False, log=True, logbase=2, doc_length=-1):
         ngram_n = self.joiner.join(ngram)
         ngram_n_1 = self.joiner.join(ngram[:-1])
         ngram_n_count = self.term_count_n[doc_id]['ngrams'].get(ngram_n,0)
@@ -351,7 +398,7 @@ class LM:
                               doc_id='')
         return pr
             
-    def pr_doc(self, doc_id, log=True, logbase=2):
+    def pr_doc(self, doc_id, log=True, logbase=2, doc_length=-1):
         ''' This method may be overridden by implementers
             Here we assume uniform Pr(doc) within Bayes rule
             i.e. Pr(doc/string) = Pr(string/doc)
@@ -362,12 +409,15 @@ class LM:
         else:
             return 1
                         
-    def calculate(self, doc_terms=[], actual_id=''):
+    def calculate(self, doc_terms=[], actual_id='', doc_length=-1):
         '''
         Given a set of terms, doc_terms
         We find the doc in training data (calc_id),
         whose LM is more likely to produce those terms
         Then return the data structure calculated back
+        doc_length is passed to pr_ngram() and pr_doc()
+            it is up to them to use it or not.
+            normally, it should be ignored if doc_length == -1
         calculated{
             prob: calculated probability Pr(calc_id/doc_terms)
             calc_id: Document ID in training data.
@@ -390,14 +440,14 @@ class LM:
             unseen_count = 0
             for ngram in ngrams:
                 (ngram_pr, ngram_seen) = self.pr_ngram(doc_id, ngram, 
-                        new_doc=new_doc, log=True, logbase=2)
+                        new_doc=new_doc, log=True, logbase=2, doc_length=doc_length)
                 doc_pr += ngram_pr
                 new_doc = False
                 if ngram_seen:
                     seen_count += 1
                 else:
                     unseen_count += 1
-            doc_pr += self.pr_doc(doc_id) 
+            doc_pr += self.pr_doc(doc_id, doc_length=doc_length) 
             if self.verbose:            
                 print doc_id, actual_id, doc_pr  
             if calculated['prob'] == -1 or doc_pr < calculated['prob']:
