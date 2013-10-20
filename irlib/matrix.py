@@ -108,7 +108,7 @@ class Matrix:
         '''
         fd = open(filename,'w')
         header = '@RELATION %s\n\n' % filename.split('.')[0]
-        header = header + '@ATTRIBUTE \'ID\' NUMERIC\n'
+        header = header + '@ATTRIBUTE \'ARFFID\' NUMERIC\n'
         for term in self.terms:
             header = header + '@ATTRIBUTE \'' + term + '\' NUMERIC\n'
         header = header + '@ATTRIBUTE \'ClassLabel\' ' + clstype + '\n'

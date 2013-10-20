@@ -45,6 +45,21 @@ class Metrics:
         )
         return_value = numerator / denominator
         return return_value
+        
+        
+    def dot_product(self, a=[], b=[]):
+        ''' Calculates the dot product between two vectors (lists)
+        '''
+        if len(a) != len(b):
+            print len(a), '!=', len(b)
+            raise Exception
+        numerator = 0
+        for i in range(0,len(a)):
+            numerator = numerator + a[i]*b[i]
+        if not numerator:
+            return 0 
+        return_value = float(numerator) 
+        return return_value
 
 if __name__ == '__main__':
 

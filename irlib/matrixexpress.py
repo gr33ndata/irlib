@@ -81,4 +81,7 @@ if __name__ == '__main__':
         
     thresholds, freqs = mx.freq_levels(threshold=3) 
     print 'Threshold Map:', thresholds
-    print mx.vocabulary(threshold_map=thresholds)  
+    print mx.vocabulary(threshold_map=thresholds) 
+    
+
+
