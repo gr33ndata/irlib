@@ -265,6 +265,50 @@ Your code should does the following
 
 * If we are doing cross checking here, the previous 4 steps are repeated for all folds 
 
+The n-Gram Language Model
+--------------------------
+
+The n-Gram Language Model (LM) is implemented in lm.py
+
+In the following example we are going to implement a character-based LM. 
+
+* We will start by importing the LM class, as well as the Preprocessor so that we can convert our docs into characters::
+
+    from irlib.lm import LM 
+    from irlib.preprocessor import Preprocessor 
+    
+* To initialize our Language Model::
+
+    # n: The order of the ngram LM, e.g. for bigram LM, n=2
+    # smoothing: Use 'Laplace', aka Add One Smoothing
+    # laplace_gama: Multiply 1 & V by this factor gamma, i.e. Add Half instead of One
+    lm = LM(n=2, verbose=True, smoothing='Laplace', laplace_gama=0.5) 
+    
+* Add documents in a similar fashion to that of the Matrix. We use p.term2ch() to convert strings into list of characters.
+
+    lm.add_doc(doc_id='apple', doc_terms=p.term2ch('the tree is full or apples'))
+    lm.add_doc(doc_id='orange', doc_terms=p.term2ch('orange orange juice'))
+
+* For a new query, 'orango juice', we can use the following command to see which doc_id it is more likely being a member of.
+
+    result = lm.calculate(doc_terms=p.term2ch('orango juice'))
+    
+* The result form lm.calculate() is a dictionary with the following fileds::
+
+    # prob: calculated probability of query being member of a document.
+            Or more precisely, we calculate the conditional probabilities
+            of all doc_id's given the query terms, Pr(doc_id/doc_terms).
+            The doc_id giving us the highest probability is returned as calc_id.
+    # calc_id: This is what we need to check. 
+               The id of document in the training data, 
+               where the query is more likely to be a member of.
+    # actual_id: If toy know the doc_id a query beforehand, 
+                 then you can pass it to lm.calculate(),
+                 and it will be returned back into this filed.
+                 This is useful for caliberation and testing. 
+    # seen_unseen_count: Counts for seen/unseen terms in training data  
+    
+      
 Contacts
 --------
  
