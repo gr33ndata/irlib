@@ -14,7 +14,7 @@ from superlist import SuperList
 class MatrixExpress(Matrix):
 
     def add_doc(self, doc_id = '', doc_class='', doc_terms=[], 
-                frequency=False, do_padding=False):
+                frequency=False, do_padding=False, stopwords=[]):
         ''' Add new document to our matrix:
             doc_id: Identifier for the document, eg. file name, url, etc. 
             doc_class: You might need this in classification.
@@ -23,6 +23,7 @@ class MatrixExpress(Matrix):
             frequency: If true, term occurences is incremented by one.
                         Else, occurences is only 0 or 1 (a la Bernoulli)
             do_padding: Boolean. Useless here
+            stopwords: If not empty, ignore those stop words in doc_terms
         ''' 
         # Update list of terms if new term seen.
         # And document (row) with its associated data.
@@ -30,6 +31,9 @@ class MatrixExpress(Matrix):
         # Discard anything not in whitelist if it is not empty
         if self.whitelist:
             doc_terms = [t for t in doc_terms if t in self.whitelist]
+        # Discard anything in stopwords if not empty
+        if stopwords:
+            doc_terms = [t for t in doc_terms if t not in stopwords]
         for term in doc_terms:
             if type(term) == tuple:
                 term_idx = self.terms.unique_append(term[0])
@@ -59,21 +63,21 @@ if __name__ == '__main__':
 
     mx = MatrixExpress()
     mx.add_doc(doc_id='1',
-               doc_terms=['apple', 'mac', 'iphone'],
+               doc_terms=['apple', 'mac', 'iphone', 'internet'],
                doc_class= 'apple',
-               frequency=True, do_padding=True)
+               frequency=True, do_padding=True, stopwords=['internet'])
     mx.add_doc(doc_id='2',
-               doc_terms=['windows', 'word', 'excel'],
+               doc_terms=['windows', 'word', 'excel', 'internet'],
                doc_class= 'microsoft',
-               frequency=True, do_padding=True)
+               frequency=True, do_padding=True, stopwords=['internet'])
     mx.add_doc(doc_id='3',
                doc_terms=['computer', 'mac', ('ipad', 10)],
                doc_class= 'apple',
-               frequency=True, do_padding=True)
+               frequency=True, do_padding=True, stopwords=['internet'])
     mx.add_doc(doc_id='4',
                doc_terms=['excel', ('computer', 10), 'office'],
                doc_class= 'microsoft',
-               frequency=True, do_padding=True)
+               frequency=True, do_padding=True, stopwords=['internet'])
     print mx
     print mx.terms
     for doc in mx.docs:

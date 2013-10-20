@@ -288,7 +288,8 @@ class Matrix:
 
  
     def add_doc(self, doc_id = '', doc_class='', doc_terms=[], 
-                frequency=False, do_padding=False):
+                frequency=False, do_padding=False, 
+                unique_ids=False, stopwords=[]):
         ''' Add new document to our matrix:
             doc_id: Identifier for the document, eg. file name, url, etc. 
             doc_class: You might need this in classification.
@@ -297,6 +298,9 @@ class Matrix:
             frequency: If true, term occurences is incremented by one.
                         Else, occurences is only 0 or 1 (a la Bernoulli)
             do_padding: Boolean. Check do_padding() for more info.
+            unique_ids: When true, if two documents are added with same id,
+                        then their terms are summed up into only one record.
+            stopwords: If not empty, ignore those stop words in doc_terms 
         ''' 
         # Update list of terms if new term seen.
         # And document (row) with its associated data.
@@ -304,6 +308,9 @@ class Matrix:
         # Discard anything not in whitelist if it is not empty
         if self.whitelist:
             doc_terms = [t for t in doc_terms if t in self.whitelist]
+        # Discard anything in stopwords if not empty
+        if stopwords:
+            doc_terms = [t for t in doc_terms if t not in stopwords]
         for term in doc_terms:
             if type(term) == tuple:
                 term_idx = self.terms.unique_append(term[0])
@@ -319,9 +326,22 @@ class Matrix:
         if not my_doc_terms:
             zeros = [float(0)] * len(self.vocabulary())
             my_doc_terms = SuperList(zeros)
-        self.docs.append({  'id': doc_id, 
-                            'class': doc_class, 
-                            'terms': my_doc_terms})
+            
+            
+        if unique_ids:
+            found = 0
+            for doc in self.docs:
+                if doc['id'] == doc_id:
+                    doc['terms'].add(my_doc_terms)
+                    found = 1
+            if not found:        
+                self.docs.append({'id': doc_id, 
+                                  'class': doc_class, 
+                                  'terms': my_doc_terms}) 
+        else:
+            self.docs.append({  'id': doc_id, 
+                                'class': doc_class, 
+                                'terms': my_doc_terms})
         # Update list of document classes if new class seen.
         #self.classes.unique_append(doc_class)
         #if self.classes.has_key(doc_class):
