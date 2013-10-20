@@ -312,8 +312,8 @@ In the following example we are going to implement a character-based LM.
 Contacts
 --------
  
-+ Name: Tarek Amr 
-+ Twitter: @gr33ndata
++ Name: `Tarek Amr <http://tarekamr.appspot.com/>`_
++ Twitter: @`gr33ndata <https://twitter.com/gr33ndata>`_
 
 
 
