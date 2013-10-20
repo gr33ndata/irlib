@@ -284,12 +284,12 @@ In the following example we are going to implement a character-based LM.
     # laplace_gama: Multiply 1 & V by this factor gamma, i.e. Add Half instead of One
     lm = LM(n=2, verbose=True, smoothing='Laplace', laplace_gama=0.5) 
     
-* Add documents in a similar fashion to that of the Matrix. We use p.term2ch() to convert strings into list of characters.
+* Add documents in a similar fashion to that of the Matrix. We use p.term2ch() to convert strings into list of characters.::
 
     lm.add_doc(doc_id='apple', doc_terms=p.term2ch('the tree is full or apples'))
     lm.add_doc(doc_id='orange', doc_terms=p.term2ch('orange orange juice'))
 
-* For a new query, 'orango juice', we can use the following command to see which doc_id it is more likely being a member of.
+* For a new query, 'orango juice', we can use the following command to see which doc_id it is more likely being a member of.::
 
     result = lm.calculate(doc_terms=p.term2ch('orango juice'))
     
