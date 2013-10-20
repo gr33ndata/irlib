@@ -313,7 +313,7 @@ Contacts
 --------
  
 + Name: `Tarek Amr <http://tarekamr.appspot.com/>`_
-+ Twitter: @`gr33ndata <https://twitter.com/gr33ndata>`_
++ Twitter: `@gr33ndata <https://twitter.com/gr33ndata>`_
 
 
 
