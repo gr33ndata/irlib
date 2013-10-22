@@ -1,7 +1,7 @@
 ''' 
 Informations Retrieval Library
 ==============================
-Utilities
+Metrics
 '''
 
 # Author: Tarek Amr <@gr33ndata> 
@@ -65,5 +65,6 @@ if __name__ == '__main__':
 
     m = Metrics()
     print "Euclid:", m.euclid_vectors([1,1],[4,5])
-    print "Cos:", m.cos_vectors([1,1,1],[1,1,1])
+    print "Cosine:", m.cos_vectors([1,1,1],[1,1,1])
+    print "Dot Product:", m.dot_product([1,1,1],[1,1,1])
 

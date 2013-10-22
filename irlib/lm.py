@@ -422,6 +422,7 @@ class LM:
             prob: calculated probability Pr(calc_id/doc_terms)
             calc_id: Document ID in training data.
             actual_id: Just returned back as passed to us.
+            seen_unseen_count: Counts for terms seen/unseen in training data
         }  
         ''' 
         calculated = {
