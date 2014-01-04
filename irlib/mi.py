@@ -33,7 +33,7 @@ class MI_MX:
     def __init__(self, mx=None, verbose=False):
         self.mx = mx
         self.mi = [0] * len(self.mx.vocabulary())
-        self.count_all = 0
+        self.count_all = 0ho
         self.count_classes = {}
         self.init_count()
     
