@@ -41,6 +41,9 @@ class Freq:
             print key, self.freqz[key]
         
     def topn(self, n=1):
+        ''' Returns top n tokens by their frequencies
+            Defaul value for n is 1, i.e. most frequent token
+        '''
         self._to_array()
         self.freq_list.sort(self._freq_cmp, reverse=True)
         return self.freq_list
