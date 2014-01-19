@@ -31,10 +31,7 @@ class Freq:
         ''' Add more tokenized text to self.freq_dict 
         '''
         for token in tokenz:
-            if token in self.freq_dict:
-                self.freq_dict[token] += 1
-            else:
-                self.freq_dict[token] = 1
+            self.freq_dict[token] = self.freq_dict.get(token,0) + 1
             
     def display(self):
         for key in self.freqz:
