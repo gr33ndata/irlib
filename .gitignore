@@ -36,4 +36,3 @@ nosetests.xml
 
 # Ignore delicious code
 /examples/delicious/
-/ddddd/
