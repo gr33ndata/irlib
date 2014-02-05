@@ -8,8 +8,6 @@ LM is an implementation of ngram Language Model
 
 import sys, math
 
-from preprocessor import Preprocessor
-
 class UnseenTerms:
 
     def __init__(self):
@@ -464,27 +462,28 @@ class LM:
 
 if __name__ == '__main__':
 
-    #p = Preprocessor()
+    #Preprocessor
     def term2ch(text):
         return [ch for ch in text]
 
     lm = LM(n=2, verbose=True, smoothing='Laplace', corpus_mix=0)
     
-    #print lm.to_ngrams(p.term2ch('hello dear world'))
+    #print lm.to_ngrams(term2ch('hello dear world'))
     #sys.exit()
     
-    #lm.add_doc(doc_id='apple', doc_terms=p.term2ch('i see glass of apple juice'))
+    #lm.add_doc(doc_id='apple', doc_terms=term2ch('i see glass of apple juice'))
     lm.add_doc(doc_id='apple', doc_terms=term2ch('the tree is full or apples'))
-    #lm.add_doc(doc_id='orange', doc_terms=p.term2ch('i see the orange tree shaking'))
+    #lm.add_doc(doc_id='orange', doc_terms=term2ch('i see the orange tree shaking'))
     lm.add_doc(doc_id='orange', doc_terms=term2ch('orange orange juice'))
-    #lm.add_doc(doc_id='orange', doc_terms=p.term2ch('i do not like jaffa cake'))
-    #lm.add_doc(doc_id='apple', doc_terms=p.term2ch('i have apple juice'))
+    #lm.add_doc(doc_id='orange', doc_terms=term2ch('i do not like jaffa cake'))
+    #lm.add_doc(doc_id='apple', doc_terms=term2ch('i have apple juice'))
     #print lm.pr
     result = lm.calculate(doc_terms=term2ch('orango juice'))
     print result
-    #print lm.term_count_n
-    #print lm.term_count_n_1
-    #print lm.vocabulary
+    
+    print lm.term_count_n
+    print lm.term_count_n_1
+    print lm.vocabulary
  
  
 
