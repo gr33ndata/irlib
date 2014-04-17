@@ -81,7 +81,7 @@ class Evaluation:
     def recall(self, class_id):
         # Note: Same as TP rate
         return self.tp_rate(class_id)
-        
+
     def f1score(self, class_id):
         #P = self.precision(class_id)
         #R = self.recall(class_id)
@@ -92,7 +92,7 @@ class Evaluation:
         FN = self.fn(class_id)
         f1 = float(2*TP) / ((2*TP) + FP + FN)
         return f1   
-    
+        
     def macro_f1(self, percent=True):
         # Returns Average F1-Score
         f1 = w = 0
@@ -114,12 +114,10 @@ class Evaluation:
         if percent:
             acc = acc * 100
         return acc      
-         
+
     def printev(self):
         for target_class in self.get_classes_labels():
             print target_class, \
                 'TP-rate', self.tp_rate(target_class), \
                 'FP-rate', self.fp_rate(target_class)
         print self.overall_accuracy()
-                
-                

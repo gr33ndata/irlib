@@ -123,11 +123,11 @@ class LM:
         else:
             self.corpus_mix = corpus_mix
         self.corpus_mode = corpus_mode
-        self.joiner = ' '
+        self.joiner = ''
         self.unseen_counts = UnseenTerms()
         self.verbose = verbose
 
-    def display(self):
+    def display(self, per_doc=True, per_cic=True):
         '''
         Displays statistics about our LM
         '''
@@ -146,7 +146,7 @@ class LM:
         print 'n-Grams (collection): %d' % (corpus_ngrams)
         corpus_ngrams1 = len(self.corpus_count_n_1['ngrams']) 
         print '(n-1)-Grams (collection): %d' % (corpus_ngrams1)
-        self.unseen_counts.display()
+        self.unseen_counts.display(per_doc, per_cic)
         # Display overlapping n-grams between classes
         #self.overlaps()
     
@@ -156,16 +156,22 @@ class LM:
         '''
         ngram_counts = {
             'classes': [],
-            'corpus': 0
+            'classes-1': [],
+            'corpus': 0,
+            'corpus-1': 0
         }
         doc_ids = self.term_count_n.keys()
         doc_ids.sort()
         for doc_id in doc_ids:
-            print self.term_count_n[doc_id]
+            #print self.term_count_n[doc_id]
             class_ngrams = len(self.term_count_n[doc_id]['ngrams'])
+            class_n1grams = len(self.term_count_n_1[doc_id]['ngrams'])
             ngram_counts['classes'].append(class_ngrams)
+            ngram_counts['classes-1'].append(class_n1grams)
         corpus_ngrams = len(self.corpus_count_n['ngrams'])
+        corpus_n1grams = len(self.corpus_count_n_1['ngrams'])
         ngram_counts['corpus'] = corpus_ngrams
+        ngram_counts['corpus-1'] = corpus_n1grams
         return ngram_counts   
             
     def overlaps(self):
@@ -301,7 +307,7 @@ class LM:
         for term in doc_terms: 
             self.vocabulary.add(term)
         terms = self.lr_padding(doc_terms)
-        ngrams = self.to_ngrams(terms)    
+        ngrams = self.to_ngrams(terms)   
         self.update_counts(doc_id, ngrams)  
     
     def laplace(self, x, y, doc_id):
