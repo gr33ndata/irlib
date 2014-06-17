@@ -1,1 +1,2 @@
 v0.1.0, 20/12/2012 -- Initial release.
+v0.1.1, 16/06/2013 -- Added LM, MI and Imroved code performance

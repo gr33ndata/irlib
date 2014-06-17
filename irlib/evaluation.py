@@ -116,8 +116,12 @@ class Evaluation:
         return acc      
 
     def printev(self):
-        for target_class in self.get_classes_labels():
+        class_labels = self.get_classes_labels()
+        print 'Class Labels', len(class_labels)
+        for target_class in class_labels:
             print target_class, \
                 'TP-rate', self.tp_rate(target_class), \
                 'FP-rate', self.fp_rate(target_class)
         print self.overall_accuracy()
+
+
