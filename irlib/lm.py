@@ -175,6 +175,8 @@ class LM:
         return ngram_counts   
             
     def overlaps(self):
+        ''' Print overlapping n-grams between classes.
+        '''
         omx = []
         doc_ids = self.term_count_n.keys()
         doc_ids.sort()
@@ -311,6 +313,8 @@ class LM:
         self.update_counts(doc_id, ngrams)  
     
     def laplace(self, x, y, doc_id):
+        ''' Laplace (Add One/Gamma) Smoothing
+        '''
         add_numer = 1 * self.laplace_gama
         laplace_mode = 'n-1'
         if laplace_mode == 'ch':
@@ -326,6 +330,8 @@ class LM:
         return float(x + add_numer) / float(y + add_denom)
     
     def witten(self, count, n, t, log, new_doc):
+        ''' Witten-Bell Smoothing
+        '''
         self.return_unseen = True if new_doc else False
         #print 'Witten (New Doc? %s)' %  new_doc 
         #print 'W:', count, n, t
