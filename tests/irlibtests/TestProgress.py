@@ -8,10 +8,7 @@ class TestProgress(TestCase):
         self.p = Progress(n=1002, percent=10)
 
     def test_add_doc(self):
-        # Try we should get 10 ones
         total = 0
-        print '\n'
         for i in range(0,1002):
-            total += self.p.show(message='Testing progress:')
-        print 'total:', total
+            total += self.p.show(message='Testing progress:', silent=True)
         self.assertEqual(total,10)   

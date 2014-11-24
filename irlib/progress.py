@@ -23,7 +23,7 @@ class Progress:
         '''
         self.count = 0
             
-    def show(self, message='Current progress:'):
+    def show(self, message='Current progress:', silent=False):
         ''' Call show whenever an item is processed,
             it will only display progress at percentages steps
         '''
@@ -34,6 +34,7 @@ class Progress:
         if self.count % self.step:
             return 0
         else:
-            print '%s %#3d %%' % (message, (self.count * self.percent) / self.step)
+            if not silent:
+                print '%s %#3d %%' % (message, (self.count * self.percent) / self.step)
             return 1
             
