@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 import unittest
+import importlib
 
-from irlibtests.TestSuperList import TestSuperList
-from irlibtests.TestMatrix import TestMatrix
-from irlibtests.TestMetrics import TestMetrics
-from irlibtests.TestProgress import TestProgress
-             
+from irlibtests import *
+
 if __name__ == '__main__':
 
     unittest.main()
