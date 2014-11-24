@@ -183,9 +183,9 @@ class LM:
         for doc_id in doc_ids:
             row = [0] * len(doc_ids)
             omx.append(row)
-        #for i in range(len(doc_ids)):
+
         for i, doc_id_i in enumerate(doc_ids):
-            #doc_id_i = doc_ids[i]
+
             ngrams = len(self.term_count_n[doc_id_i]['ngrams'])
             omx[i][i] = ngrams
             for j in range(i):
