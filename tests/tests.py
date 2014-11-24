@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 
+import os
 import sys
 import unittest
 
-sys.path.append('../')
+# Append IRLib to System Path
+cwd = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(cwd, '..'))
+
 from irlib.superlist import SuperList
 from irlib.matrix import Matrix, Stats
 from irlib.metrics import Metrics
