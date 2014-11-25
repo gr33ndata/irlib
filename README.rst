@@ -307,7 +307,14 @@ In the following example we are going to implement a character-based LM.
                  and it will be returned back into this filed.
                  This is useful for caliberation and testing. 
     # seen_unseen_count: Counts for seen/unseen terms in training data  
-    
+
+
+Testing
+--------
+
+To run tests::
+
+    py tests/tests.py     
       
 Contacts
 --------
