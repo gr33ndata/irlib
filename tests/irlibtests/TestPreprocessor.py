@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from irlib.preprocessor import Preprocessor
+from irlib.preprocessor import Preprocessor, my_nltk
 
 class TestPreprocessor(TestCase):
 
@@ -15,4 +15,7 @@ class TestPreprocessor(TestCase):
     def test_stemmer(self):
         p = Preprocessor(stem=True)
         stemmed = p.stemmer('running')
-        self.assertEqual(stemmed,'run')   
+        if my_nltk:
+            self.assertEqual(stemmed,'run')  
+        else: 
+            self.assertTrue(False,'NLTK is not installed') 

@@ -11,6 +11,7 @@ sys.path.append(get_irlib_path())
 
 import irlib
 
+from irlibtests.TestLM import TestLM
 from irlibtests.TestSuperList import TestSuperList
 from irlibtests.TestPreprocessor import TestPreprocessor
 from irlibtests.TestMatrix import TestMatrix

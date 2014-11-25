@@ -127,6 +127,9 @@ class LM:
         self.unseen_counts = UnseenTerms()
         self.verbose = verbose
 
+    def get_vocabulary(self):
+        return self.vocabulary
+        
     def display(self, per_doc=True, per_cic=True):
         '''
         Displays statistics about our LM
