@@ -83,4 +83,3 @@ class Preprocessor:
 if __name__ == '__main__':
 
 	p = Preprocessor()
-	p.get_infrequent_terms('')

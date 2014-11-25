@@ -7,7 +7,7 @@ class TestProgress(TestCase):
     def setUp(self):
         self.p = Progress(n=1002, percent=10)
 
-    def test_add_doc(self):
+    def test_progress_counter(self):
         total = 0
         for i in range(0,1002):
             total += self.p.show(message='Testing progress:', silent=True)
