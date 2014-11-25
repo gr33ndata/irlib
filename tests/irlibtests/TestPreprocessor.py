@@ -5,8 +5,14 @@ from irlib.preprocessor import Preprocessor
 class TestPreprocessor(TestCase):
 
     def setUp(self):
-        self.p = Preprocessor()
+        pass        
 
     def test_term2ch(self):
-        chz = self.p.term2ch('help')
-        self.assertEqual(chz,['h', 'e', 'l', 'p'])   
+        p = Preprocessor()
+        charlist = p.term2ch('help')
+        self.assertEqual(charlist, ['h', 'e', 'l', 'p']) 
+
+    def test_stemmer(self):
+        p = Preprocessor(stem=True)
+        stemmed = p.stemmer('running')
+        self.assertEqual(stemmed,'run')   
