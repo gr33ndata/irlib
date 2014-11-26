@@ -264,7 +264,7 @@ class Matrix:
 		val = 1 + math.log10(val) if val != 0 else float(0)
 		return val
 		
-    def tf_idf(self, do_idf=True):
+    def tf_idf(self, do_idf=True, log_base=10):
         ''' Converts matrix to tf.idf values
             do_idf: if False, convert to tf only
         '''        
@@ -276,18 +276,19 @@ class Matrix:
                 if doc['terms'][idx] > 0:
                     row[idx] = 1
             df.add(row)
-        
+
         for doc in self.docs:
             for idx in range(len(self.terms)):
                 tf = self._log_tf(doc['terms'][idx])
-                idf = math.log10(float(N) / df[idx])
+                idf = math.log(float(N) / df[idx], log_base)
+
                 if do_idf:
                     doc['terms'][idx] = tf * idf
                 else:
                     doc['terms'][idx] = tf
 
  
-    def add_doc(self, doc_id = '', doc_class='', doc_terms=[], 
+    def add_doc(self, doc_id='', doc_class='', doc_terms=[], 
                 frequency=False, do_padding=False, 
                 unique_ids=False, stopwords=[]):
         ''' Add new document to our matrix:
@@ -302,6 +303,8 @@ class Matrix:
                         then their terms are summed up into only one record.
             stopwords: If not empty, ignore those stop words in doc_terms 
         ''' 
+        if not doc_terms:
+            raise ValueError('doc_terms cannot be empty')
         # Update list of terms if new term seen.
         # And document (row) with its associated data.
         my_doc_terms = SuperList()

@@ -14,7 +14,6 @@ import sys, math
 # Should change below to new class
 from aux import SuperList
 # from superlist import SuperList
- 
 
 class Evaluation:
 	'''
