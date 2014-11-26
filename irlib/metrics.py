@@ -10,12 +10,14 @@ import math
 
 class Metrics:
 
+    def check_same_len(self, a=[], b=[]):
+        if len(a) != len(b):
+            raise ValueError('Vectors not with same length')
+
     def euclid_vectors(self, a=[], b=[]):
         ''' Calculate Euclidean distance between two vectors (lists)
-        '''
-        if len(a) != len(b):
-            print len(a), '!=', len(b)
-            raise Exception
+        ''' 
+        self.check_same_len(a,b)
         euclid_sqrd = 0
         for i in range(0,a.__len__()):
             euclid_sqrd += ((a[i] - b[i])*(a[i] - b[i]))
@@ -24,9 +26,7 @@ class Metrics:
     def cos_vectors(self, a=[], b=[]):
         ''' Calculates the cosine distance between two vectors (lists)
         '''
-        if len(a) != len(b):
-            print len(a), '!=', len(b)
-            raise Exception
+        self.check_same_len(a,b)
         norm_a_sqrd = norm_b_sqrd = 0
         numerator = 0
         for i in range(0,len(a)):
@@ -45,14 +45,19 @@ class Metrics:
         )
         return_value = numerator / denominator
         return return_value
-        
-        
+    
+    def jaccard_vectors(self, a=[], b=[]):
+        self.check_same_len(a,b) 
+        if a == b:
+            return 1  
+        intersection = [bool(i) and bool(j) for i,j in zip(a,b)]
+        union = len(a) + len(b) - len(intersection)
+        return sum(intersection) / float(union)
+
     def dot_product(self, a=[], b=[]):
         ''' Calculates the dot product between two vectors (lists)
         '''
-        if len(a) != len(b):
-            print len(a), '!=', len(b)
-            raise Exception
+        self.check_same_len(a,b)
         numerator = 0
         for i in range(0,len(a)):
             numerator = numerator + a[i]*b[i]
