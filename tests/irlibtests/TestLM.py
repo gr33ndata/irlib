@@ -7,6 +7,10 @@ class TestLM(TestCase):
     def setUp(self):
         pass
 
+    def test_n_neq_zero(self):
+        with self.assertRaises(ValueError):
+            LM(n=0)
+
     def test_vocabulary(self):
         lm = LM()
         lm.add_doc(doc_id='doc1', doc_terms='apple tree'.split())
@@ -19,6 +23,7 @@ class TestLM(TestCase):
         lm = LM(n=n)
         ngrams_returned = lm.to_ngrams(sent.split())
         self.assertEqual(ngrams_returned, expected_ngrams)
+
 
     def test_ngram1(self):
         self.helper_test_ngrams(

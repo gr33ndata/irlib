@@ -101,6 +101,8 @@ class LM:
                    : In fact, 'Hiemstra' makes sense only with Multivaria LM
                    : Whereas the LM here is Multinomial. 
         '''
+        if n < 1:
+            raise ValueError('n should be >= 1')
         self.n = n
         #(self.n, self.m) = n if type(n) == tuple else (n,0)
         # Counters for joint probabilities
@@ -129,7 +131,7 @@ class LM:
 
     def get_vocabulary(self):
         return self.vocabulary
-        
+
     def display(self, per_doc=True, per_cic=True):
         '''
         Displays statistics about our LM
