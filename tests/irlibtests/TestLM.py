@@ -15,32 +15,40 @@ class TestLM(TestCase):
         vocab_expected = set(['apple','tree','orange','juice'])
         self.assertEqual(vocab_returned, vocab_expected)
 
+    def helper_test_ngrams(self, n, sent, expected_ngrams):
+        lm = LM(n=n)
+        ngrams_returned = lm.to_ngrams(sent.split())
+        self.assertEqual(ngrams_returned, expected_ngrams)
+
     def test_ngram1(self):
-        lm = LM(n=1)
-        ngrams_returned = lm.to_ngrams('i like apples and oranges'.split())
-        ngrams_expected = [
-            ['i'], ['like'], ['apples'], ['and'], ['oranges']
-        ]
-        self.assertEqual(ngrams_returned, ngrams_expected)
+        self.helper_test_ngrams(
+            n=1, 
+            sent='i like apples and oranges',
+            expected_ngrams=[
+                ['i'], ['like'], ['apples'], ['and'], ['oranges']
+            ]
+        )
 
     def test_ngram2(self):
-        lm = LM(n=2)
-        ngrams_returned = lm.to_ngrams('i like apples and oranges'.split())
-        ngrams_expected = [
-            ['i', 'like'], 
-            ['like', 'apples'], 
-            ['apples', 'and'], 
-            ['and', 'oranges']
-        ]
-        self.assertEqual(ngrams_returned, ngrams_expected)
+        self.helper_test_ngrams(
+            n=2, 
+            sent='i like apples and oranges',
+            expected_ngrams=[
+                ['i', 'like'], 
+                ['like', 'apples'], 
+                ['apples', 'and'], 
+                ['and', 'oranges']
+            ]
+        )
 
     def test_ngram3(self):
-        lm = LM(n=3)
-        ngrams_returned = lm.to_ngrams('i like apples and oranges'.split())
-        ngrams_expected = [
-            ['i', 'like', 'apples'],
-            ['like', 'apples', 'and'],
-            ['apples', 'and', 'oranges']
-        ]
-        self.assertEqual(ngrams_returned, ngrams_expected)
+        self.helper_test_ngrams(
+            n=3, 
+            sent='i like apples and oranges',
+            expected_ngrams=[
+                ['i', 'like', 'apples'],
+                ['like', 'apples', 'and'],
+                ['apples', 'and', 'oranges']
+            ]
+        )
     
