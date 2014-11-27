@@ -57,3 +57,4 @@ class TestMetrics(TestCase):
     def test_cos_1(self):
         c = self.m.cos_vectors([1,1,1],[1,1,1])
         self.assertEqual(round(c,5),float(1)) 
+

@@ -40,7 +40,7 @@ class TestMatrix(TestCase):
         self.assertEqual('buy' in self.m, True)
         self.assertEqual('shopping' in self.m, False)
 
-    def test_add_doc_non_empty(self):
+    def test_add_doc_empty(self):
         doc1_terms = []
         with self.assertRaises(ValueError):
             self.m.add_doc( doc_id = 'doc1', 
