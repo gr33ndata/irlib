@@ -259,9 +259,9 @@ class Matrix:
         #for cls in self.classes:
         #    self.classes[cls].expand(new_len=len(self.terms))
 
-    def _log_tf(self, value):
+    def _log_tf(self, value, log_base=10):
 		val = float(value)
-		val = 1 + math.log10(val) if val != 0 else float(0)
+		val = 1 + math.log(val, log_base) if val != 0 else float(0)
 		return val
 		
     def tf_idf(self, do_idf=True, log_base=10):
