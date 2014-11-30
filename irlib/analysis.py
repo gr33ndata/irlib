@@ -14,7 +14,10 @@ class Freq:
     def __init__(self):
         self.freq_dict = {}
         self.freq_list = []
-        
+    
+    def __getitem__(self, term):
+        return self.freq_dict.get(term, -1)
+
     def _to_array(self):
         ''' Converts self.freq_dict to self.freq_list 
         '''
