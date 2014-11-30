@@ -63,3 +63,9 @@ class TestAnalysis(TestCase):
         f.add(['apple', 'and', 'cinnamon', 'pie'])
         returned_array = f.topn(5)
         self.assertEqual(len(returned_array), 5)
+
+    def test_len(self):
+        f = Freq()
+        f.add(['apple', 'not', 'orange', 'juice'])
+        f.add(['apple', 'and', 'cinnamon', 'pie'])
+        self.assertEqual(len(f), 7)

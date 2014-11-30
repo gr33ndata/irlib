@@ -23,8 +23,11 @@ class Freq:
     def __getitem__(self, term):
         return self.freq_dict.get(term, -1)
 
+    def __len__(self):
+        return len(self.freq_dict)
+
     def __str__(self):
-        return 'Class Instance of Freq ({n} terms)'.format(n=len(self.freq_dict))
+        return 'Class Instance of Freq ({n} terms)'.format(n=len(self))
 
     def to_array(self):
         ''' Converts self.freq_dict to self.freq_list 
