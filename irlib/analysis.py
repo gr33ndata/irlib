@@ -13,30 +13,33 @@ class Freq:
 
     def __init__(self):
         self.freq_dict = {}
-        self.freq_list = []
     
+    def add(self, tokenz):
+        ''' Add more tokenized text to self.freq_dict 
+        '''
+        for token in tokenz:
+            self.freq_dict[token] = self.freq_dict.get(token,0) + 1
+
     def __getitem__(self, term):
         return self.freq_dict.get(term, -1)
 
-    def _to_array(self):
+    def __str__(self):
+        return 'Class Instance of Freq ({n} terms)'.format(n=len(self.freq_dict))
+
+    def to_array(self):
         ''' Converts self.freq_dict to self.freq_list 
         '''
-        for tok in self.freq_dict:
-            self.freq_list.append({'tok': tok, 'freq': self.freq_dict[tok]})
+        #for tok in self.freq_dict:
+        #    self.freq_list.append({'token': tok, 'freq': self.freq_dict[tok]})
+        return [{'token': tok, 'freq': self.freq_dict[tok]} for tok in self.freq_dict]
     
-    def _freq_cmp(self, a, b):
+    def freq_cmp(self, a, b):
         ''' Helper functions used in sorting self.freq_list      
         '''
         if a['freq'] > b['freq']:
             return  1
         else:
             return -1
-               
-    def add(self, tokenz):
-        ''' Add more tokenized text to self.freq_dict 
-        '''
-        for token in tokenz:
-            self.freq_dict[token] = self.freq_dict.get(token,0) + 1
             
     def display(self):
         for key in self.freqz:
@@ -46,13 +49,13 @@ class Freq:
         ''' Returns top n tokens by their frequencies
             Defaul value for n is 1, i.e. most frequent token
         '''
-        self._to_array()
-        self.freq_list.sort(self._freq_cmp, reverse=True)
-        return self.freq_list
+        topn_list = self.to_array()
+        topn_list.sort(self.freq_cmp, reverse=True)
+        return topn_list[:n]
     
     def print_topn(self, n=1):
         for item in self.topn(n):    
-            print item['tok'], item['freq']
+            print item['token'], item['freq']
 
 if __name__ == '__main__':
 
@@ -61,5 +64,5 @@ if __name__ == '__main__':
     f.add(['apple', 'pie'])
     f.add(['orange', 'juice'])
     f.add(['banana', 'split'])
-    #f.display()
+    print f
     f.print_topn(10)
