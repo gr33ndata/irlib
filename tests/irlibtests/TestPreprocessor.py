@@ -20,6 +20,14 @@ class TestPreprocessor(TestCase):
         else: 
             self.assertTrue(False,'NLTK is not installed') 
 
+    def test_stemmer_lower(self):
+        p = Preprocessor(lower=True, stem=True)
+        stemmed = p.stemmer('Running')
+        if my_nltk:
+            self.assertEqual(stemmed,'run')  
+        else: 
+            self.assertTrue(False,'NLTK is not installed') 
+                    
     def test_tokenizer_lower(self):
         p = Preprocessor(lower=True, stem=False)
         tokens = p.tokenizer('This is IRLib')
