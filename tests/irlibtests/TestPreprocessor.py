@@ -19,3 +19,14 @@ class TestPreprocessor(TestCase):
             self.assertEqual(stemmed,'run')  
         else: 
             self.assertTrue(False,'NLTK is not installed') 
+
+    def test_tokenizer_lower(self):
+        p = Preprocessor(lower=True, stem=False)
+        tokens = p.tokenizer('This is IRLib')
+        self.assertEqual(tokens,['this','is','irlib'])
+
+    def test_ngram_tokenizer(self):
+        p = Preprocessor(lower=False, stem=False, ngram=2)
+        returned_tokens = p.ngram_tokenizer('how do you do?')
+        expected_tokens = ['how do', 'do you', 'you do']
+        self.assertEqual(returned_tokens, expected_tokens)
