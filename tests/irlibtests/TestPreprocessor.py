@@ -25,8 +25,14 @@ class TestPreprocessor(TestCase):
         tokens = p.tokenizer('This is IRLib')
         self.assertEqual(tokens,['this','is','irlib'])
 
-    def test_ngram_tokenizer(self):
+    def test_2gram_tokenizer(self):
         p = Preprocessor(lower=False, stem=False, ngram=2)
         returned_tokens = p.ngram_tokenizer('how do you do?')
         expected_tokens = ['how do', 'do you', 'you do']
+        self.assertEqual(returned_tokens, expected_tokens)
+
+    def test_3gram_tokenizer(self):
+        p = Preprocessor(lower=False, stem=False, ngram=3)
+        returned_tokens = p.ngram_tokenizer('how do you do?')
+        expected_tokens = ['how do you', 'do you do']
         self.assertEqual(returned_tokens, expected_tokens)
