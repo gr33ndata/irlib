@@ -18,3 +18,4 @@ from irlibtests.TestMatrix import TestMatrix
 from irlibtests.TestMetrics import TestMetrics
 from irlibtests.TestProgress import TestProgress
 from irlibtests.TestAnalysis import TestAnalysis
+from irlibtests.TestEvaluation import TestEvaluation
