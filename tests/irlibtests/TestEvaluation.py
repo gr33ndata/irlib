@@ -7,7 +7,7 @@ class TestEvaluation(TestCase):
     def setUp(self):
         pass
 
-    def test_freq_existing_term(self):
+    def test_correct_label_list(self):
         e = Evaluation()
         e.ev('Apples', 'Oranges')
         e.ev('Melons', 'Bananas')
