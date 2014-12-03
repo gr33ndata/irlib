@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import unittest
-import importlib
 
 from tests import *
 
