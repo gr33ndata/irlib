@@ -314,11 +314,11 @@ Testing
 
 Normally, you can run test using make command as follows::
 
-    make test
+    $ make test
 
 However, if you want to run the underlying python code, then type:
 
-    py tests/tests.py     
+    $ python test.py     
       
 Contacts
 --------
