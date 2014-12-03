@@ -312,7 +312,11 @@ In the following example we are going to implement a character-based LM.
 Testing
 --------
 
-To run tests::
+Normally, you can run test using make command as follows::
+
+    make test
+
+However, if you want to run the underlying python code, then type:
 
     py tests/tests.py     
       
