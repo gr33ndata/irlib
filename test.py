@@ -2,7 +2,7 @@
 import unittest
 import importlib
 
-from irlibtests import *
+from tests import *
 
 if __name__ == '__main__':
 
