@@ -163,11 +163,11 @@ Supported file types are CSV (both comma or tab seperated) and ARFF (for using i
 
 * To dump data into a CSV file::
 
-    mx.dump('filename.csv', delimiter='\t', header=True):
+    mx.dump('filename.csv', delimiter='\t', header=True)
     
 * To dump it into ARFF file::
 
-    mx.dump_arff('filename.arff', clstype='{1,2}'):
+    mx.dump_arff('filename.arff', clstype='{1,2}')
     
 * Notice that class labels in Weka are normally the last item in your featureset. Their type is normally set to 'Nominal attributes'. Hence, if for example you have 3 class labels A, B and C, you then should set clstype='{A,B,C}'. Recall that while reading your documents and adding them to the matrix using add_doc(), you can actaully set class labels there as follows::
 
