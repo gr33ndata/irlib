@@ -171,7 +171,7 @@ Supported file types are CSV (both comma or tab seperated) and ARFF (for using i
     
 * Notice that class labels in Weka are normally the last item in your featureset. Their type is normally set to 'Nominal attributes'. Hence, if for example you have 3 class labels A, B and C, you then should set clstype='{A,B,C}'. Recall that while reading your documents and adding them to the matrix using add_doc(), you can actaully set class labels there as follows::
 
-    mx.add_doc(doc_id = '42', doc_class='A', doc_terms=['the', 'apple', 'was', 'on', 'the', 'tree']):
+    mx.add_doc(doc_id = '42', doc_class='A', doc_terms=['the', 'apple', 'was', 'on', 'the', 'tree'])
 
 
 How to use for classification
