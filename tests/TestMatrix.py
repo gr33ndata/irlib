@@ -80,3 +80,17 @@ class TestMatrix(TestCase):
         doc1_tfidf_retval = [round(item, 3) for item in doc1_tfidf_retval]
         doc1_tfidf_expval = [0.585, 0.585, 0.585, 0, 0, 0]
         self.assertEqual(doc1_tfidf_retval, doc1_tfidf_expval)
+
+    def test_white_and_black_lists(self):
+        doc_terms = ['this', 'is', 'a', 'new', 'test']
+        white_list = ['test']
+        black_list = ['this', 'is', 'a']
+        mx = Matrix(whitelist=white_list, blacklist=black_list)
+        mx.add_doc( doc_id = 'doc1', 
+                    doc_class='TestClass', 
+                    doc_terms= doc_terms,
+                    do_padding=True,
+                    frequency=True)
+        returned_terms = mx.vocabulary()
+        expected_terms = ['test']
+        self.assertItemsEqual(returned_terms, expected_terms)

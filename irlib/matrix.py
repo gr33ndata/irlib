@@ -21,10 +21,12 @@ def log_tf(value):
 
 class Matrix:
 
-    def __init__(self, whitelist=[]):
+    def __init__(self, whitelist=[], blacklist=[]):
         ''' Initilize our matrix.
             whitelist: If not empty, discard any terms not in whitelist,
                        when adding new terms via add_doc()
+            blacklist: If not empty, discard any terms in blacklist,
+                       when adding new terms via add_doc() 
             terms: We will populate this with our vocabulary of terms
             docs: This is our actual 2D matrix terms/docs.
                   A list of the following dictionary,
@@ -39,6 +41,7 @@ class Matrix:
         #self.classes = {}
         self.docs = []
         self.whitelist = whitelist
+        self.blacklist = blacklist
 
     def __len__(self):
         'Returns number of loaded ducuments'
@@ -290,7 +293,7 @@ class Matrix:
  
     def add_doc(self, doc_id='', doc_class='', doc_terms=[], 
                 frequency=False, do_padding=False, 
-                unique_ids=False, stopwords=[]):
+                unique_ids=False):
         ''' Add new document to our matrix:
             doc_id: Identifier for the document, eg. file name, url, etc. 
             doc_class: You might need this in classification.
@@ -301,7 +304,6 @@ class Matrix:
             do_padding: Boolean. Check do_padding() for more info.
             unique_ids: When true, if two documents are added with same id,
                         then their terms are summed up into only one record.
-            stopwords: If not empty, ignore those stop words in doc_terms 
         ''' 
         if not doc_terms:
             raise ValueError('doc_terms cannot be empty')
@@ -312,8 +314,8 @@ class Matrix:
         if self.whitelist:
             doc_terms = [t for t in doc_terms if t in self.whitelist]
         # Discard anything in stopwords if not empty
-        if stopwords:
-            doc_terms = [t for t in doc_terms if t not in stopwords]
+        if self.blacklist: 
+            doc_terms = [t for t in doc_terms if t not in self.blacklist]
         for term in doc_terms:
             if type(term) == tuple:
                 term_idx = self.terms.unique_append(term[0])
