@@ -27,6 +27,8 @@ class Matrix:
                        when adding new terms via add_doc()
             blacklist: If not empty, discard any terms in blacklist,
                        when adding new terms via add_doc() 
+                       Anything in the blacklist will be discarded,
+                       even if it is in the whitelist.
             terms: We will populate this with our vocabulary of terms
             docs: This is our actual 2D matrix terms/docs.
                   A list of the following dictionary,
