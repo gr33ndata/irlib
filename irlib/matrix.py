@@ -232,13 +232,6 @@ class Matrix:
     def __contains__(self, term):
         'Checks if certain terms is loaded'
         return self.terms.__contains__(term)        
-
-    def to_be_deleted__getitem__(self, term):
-        'Returns occurences of term in all documents'
-        if not term in self:
-            return SuperList()
-        col = [doc['terms'][self.terms.index(term)] for doc in self.docs]
-        return SuperList(col)
         
     def __getitem__(self, term):
         ''' If term exists in terms, retruns it position in list,
