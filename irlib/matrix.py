@@ -227,6 +227,10 @@ class Matrix:
             return -1
         else:
             return self.terms.index(term)
+
+    def docs_iter(self):
+        for doc in self.docs:
+            yield doc
     
     def do_padding(self):
         ''' Align the length of all rows in matrix
@@ -336,7 +340,6 @@ class Matrix:
         #    self.classes[doc_class] = my_doc_terms
         if do_padding: 
             self.do_padding()
-        
 
     def query_to_vector(self, q_terms, frequency=False,):
         ''' Converts query to a list alligned with our self.terms.

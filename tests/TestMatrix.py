@@ -47,6 +47,17 @@ class TestMatrix(TestCase):
                             doc_class='Spam', 
                             doc_terms= doc1_terms)
 
+    def test_docs_iter(self):
+        mx = Matrix()
+        for i,s in enumerate(['hello', 'how are you', 'fine thank you']):
+            mx.add_doc( doc_id = str(i), 
+                        doc_class='Email', 
+                        doc_terms= s.split(),
+                        do_padding=True,
+                        frequency=True)
+        mx_len = len([doc for doc in mx.docs_iter()])
+        self.assertEqual(mx_len, 3)
+
     def test_query_alignment(self):
         doc1_terms = ['buy', 'now', 'or', 'buy', 'later']
         self.m.add_doc( doc_id = 'file_spam.txt', 
