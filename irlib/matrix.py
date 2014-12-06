@@ -89,7 +89,7 @@ class Matrix:
         fd.close()
         
     def dump(self, filename, delimiter='\t', header=True):
-        ''' Dumps matrix to a file
+        ''' Dumps matrix to CSV/TSV file
         '''
         fd = open(filename,'w')
         # Let's first print file header
@@ -109,7 +109,7 @@ class Matrix:
         fd.close()
     
     def dump_arff(self, filename, delimiter=',', clstype='NUMERIC'):
-        ''' Dumps matrix to a file
+        ''' Dumps matrix to ARFF (Weka) file
         '''
         fd = open(filename,'w')
         header = '@RELATION %s\n\n' % filename.split('.')[0]
