@@ -168,20 +168,6 @@ class Matrix:
             fd.write('%s\n' % line)
             idx += 1
         fd.close()
-        
-    def prune_old(self, prune_map):
-        ''' Helper method to remove terms (fields) of our matrix
-            prune_map is a list of 0's and 1's of same length as self.terms.
-            For each term, if 0, then remove it, otherwise keep it.
-        '''
-        if not(prune_map) or len(prune_map) != len(self.terms):
-            return False
-        for i in range(len(prune_map)-1,-1,-1):
-            if prune_map[i] == 0:
-                #print self.terms[i]
-                self.terms.pop(i)
-                for doc in self.docs:
-                    doc['terms'].pop(i)
                     
     def prune(self, prune_map, show_progress=True):
         ''' Helper method to remove terms (fields) of our matrix
