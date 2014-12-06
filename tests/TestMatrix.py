@@ -47,7 +47,7 @@ class TestMatrix(TestCase):
                             doc_class='Spam', 
                             doc_terms= doc1_terms)
 
-    def test_docs_iter(self):
+    def test_docs_unique_ids(self):
         mx = Matrix()
         for i,s in enumerate(['hello', 'how are you', 'fine thank you']):
             mx.add_doc( doc_id = str(i), 
@@ -55,8 +55,24 @@ class TestMatrix(TestCase):
                         doc_terms= s.split(),
                         do_padding=True,
                         frequency=True)
-        mx_len = len([doc for doc in mx.docs_iter()])
-        self.assertEqual(mx_len, 3)
+        mx.add_doc(doc_id = '1', 
+                   doc_class='Email', 
+                   doc_terms= 'goodbye'.split(),
+                   do_padding=True,
+                   frequency=True,
+                   unique_ids=True)
+        self.assertEqual(len(mx), 3)
+
+    def test_get_doc_by_id(self):
+        mx = Matrix()
+        for i,s in enumerate(['hello', 'how are you', 'fine thank you']):
+            mx.add_doc( doc_id = str(i), 
+                        doc_class='Email', 
+                        doc_terms= s.split(),
+                        do_padding=True,
+                        frequency=True)
+        doc1_id = mx.docs.index('1')
+        self.assertEqual(mx.docs[doc1_id]['id'], '1')
 
     def test_query_alignment(self):
         doc1_terms = ['buy', 'now', 'or', 'buy', 'later']

@@ -19,6 +19,29 @@ def log_tf(value):
     val = 1 + math.log10(val) if val != 0 else float(0)
     return val
 
+class MatrixDocs(list):
+
+    def index(self, doc_id):
+        for i, doc in enumerate(self):
+            if doc['id'] == doc_id:
+                return i
+        raise IndexError
+
+    def __contains__(self, doc_id):
+        try:
+            index(doc_id)
+            return True
+        except:
+            return False
+
+    def add_unique(self, doc):
+        try:
+            idx = self.index(doc['id'])
+            self[idx]['terms'].add(doc['terms'])
+        except IndexError:
+            self.append(doc)      
+                 
+
 class Matrix:
 
     def __init__(self, whitelist=[], blacklist=[]):
@@ -41,7 +64,7 @@ class Matrix:
         self.terms = SuperList()
         # List of document classes and terms summary
         #self.classes = {}
-        self.docs = []
+        self.docs = MatrixDocs()
         self.whitelist = whitelist
         self.blacklist = blacklist
 
@@ -227,10 +250,6 @@ class Matrix:
             return -1
         else:
             return self.terms.index(term)
-
-    def docs_iter(self):
-        for doc in self.docs:
-            yield doc
     
     def do_padding(self):
         ''' Align the length of all rows in matrix
@@ -274,8 +293,8 @@ class Matrix:
                     doc['terms'][idx] = tf * idf
                 else:
                     doc['terms'][idx] = tf
-
- 
+                    
+                
     def add_doc(self, doc_id='', doc_class='', doc_terms=[], 
                 frequency=False, do_padding=False, 
                 unique_ids=False):
@@ -316,28 +335,16 @@ class Matrix:
         if not my_doc_terms:
             zeros = [float(0)] * len(self.vocabulary())
             my_doc_terms = SuperList(zeros)
-            
-            
+             
         if unique_ids:
-            found = 0
-            for doc in self.docs:
-                if doc['id'] == doc_id:
-                    doc['terms'].add(my_doc_terms)
-                    found = 1
-            if not found:        
-                self.docs.append({'id': doc_id, 
+            self.docs.add_unique({'id': doc_id, 
                                   'class': doc_class, 
-                                  'terms': my_doc_terms}) 
+                                  'terms': my_doc_terms})              
         else:
-            self.docs.append({  'id': doc_id, 
-                                'class': doc_class, 
-                                'terms': my_doc_terms})
-        # Update list of document classes if new class seen.
-        #self.classes.unique_append(doc_class)
-        #if self.classes.has_key(doc_class):
-        #else:
-        #    self.classes[doc_class].add(my_doc_terms)
-        #    self.classes[doc_class] = my_doc_terms
+            self.docs.append({    'id': doc_id, 
+                                  'class': doc_class, 
+                                  'terms': my_doc_terms})
+
         if do_padding: 
             self.do_padding()
 
