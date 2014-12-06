@@ -10,15 +10,6 @@ import sys, math, random
 from superlist import SuperList
 from progress import Progress
 
-def log_tf(value):
-    ''' The log(tf) 
-        returns: 1 + log_10(value) if value != 0 
-               : 0 if value == 0
-    '''
-    val = float(value)
-    val = 1 + math.log10(val) if val != 0 else float(0)
-    return val
-
 class MatrixDocs(list):
 
     def doc_fields(self):
