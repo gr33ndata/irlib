@@ -275,12 +275,22 @@ class Rocchio(Index):
 		for doc in self.matrix:
 			if self.proto_classes.has_key(doc['class']):
 				# Updating values of existing proto-class with new doc, we only log_tf the newly added vector
-				sum_vector = self. add_vectors(a=self.proto_classes[doc['class']]['log_tf'], b=doc['terms'], log_tf_a = False, log_tf_b = True)
-				self.proto_classes[doc['class']] = {'log_tf': sum_vector, 'docs_count': self.proto_classes[doc['class']]['docs_count'] + 1}
+				sum_vector = self.add_vectors(a=self.proto_classes[doc['class']]['log_tf'], 
+											   b=doc['terms'], 
+											   log_tf_a = False, 
+											   log_tf_b = True)
+				self.proto_classes[doc['class']] = {
+					'log_tf': sum_vector, 
+					'docs_count': self.proto_classes[doc['class']]['docs_count'] + 1
+				}
 			else:
 				# First time to deal with the class, notice the add_vector will convert to log_tf by default
-				sum_vector = self.add_vectors(a=doc['terms'], log_tf_a = True)
-				self.proto_classes[doc['class']] = {'log_tf': sum_vector, 'docs_count': 1}
+				sum_vector = self.add_vectors(a=doc['terms'], 
+											  log_tf_a = True)
+				self.proto_classes[doc['class']] = {
+					'log_tf': sum_vector, 
+					'docs_count': 1
+				}
 		for p_class in self.proto_classes.keys():
 			# Calculate centroid (proto-class) mean values
 			self.proto_classes[p_class]['log_tf'] = self.divide_vector(self.proto_classes[p_class]['log_tf'], 
