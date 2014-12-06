@@ -8,14 +8,12 @@ class TestMatrixDocs(TestCase):
         self.mxds = MatrixDocs()
     
     def test_doc_fields(self):
-        # Try without frequency
         self.assertEqual(
             self.mxds.doc_fields(),
             set(['id', 'class', 'terms'])
         )
 
     def test_is_valid_doc(self):
-        # Try without frequency
         self.assertEqual(
             self.mxds.is_valid_doc({
                 'id': '1',
@@ -33,6 +31,22 @@ class TestMatrixDocs(TestCase):
                 'for_future_use': 'na'
             }),
             False
+        )
+
+    def test_shuffle(self):
+        mxdocs = MatrixDocs([0,1,2,3,4,5,6,7])
+        mxdocs.shuffle()
+        self.assertNotEqual(
+            mxdocs, MatrixDocs([0,1,2,3,4,5,6,7])
+        )
+
+    def test_split(self):
+        mxdocs = MatrixDocs([0,1,2,3])
+        left   = MatrixDocs([0,1])
+        right  = MatrixDocs([2,3])
+        self.assertEqual(
+            mxdocs.split(),
+            (left, right)
         )
 
 
