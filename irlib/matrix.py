@@ -6,7 +6,7 @@ Matrix is an index for documents, terms, and their classes.
 
 # Author: Tarek Amr <@gr33ndata> 
 
-import sys, math
+import sys, math, random
 from superlist import SuperList
 from progress import Progress
 
@@ -20,6 +20,13 @@ def log_tf(value):
     return val
 
 class MatrixDocs(list):
+
+    def doc_fields(self):
+        return set(['id', 'class', 'terms'])
+
+    def is_valid_doc(self, doc):
+        doc_fields = set(doc.keys())
+        return self.doc_fields().issubset(doc_fields)
 
     def index(self, doc_id):
         for i, doc in enumerate(self):
@@ -35,12 +42,16 @@ class MatrixDocs(list):
             return False
 
     def add_unique(self, doc):
+        if not self.is_valid_doc(doc):
+            raise ValueError
         try:
             idx = self.index(doc['id'])
             self[idx]['terms'].add(doc['terms'])
         except IndexError:
             self.append(doc)      
-                 
+    
+
+
 
 class Matrix:
 

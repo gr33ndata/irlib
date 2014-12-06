@@ -2,6 +2,40 @@ from unittest import TestCase
 
 from irlib.matrix import Matrix
 
+class TestMatrixDocs(TestCase):
+
+    def setUp(self):
+        self.mxds = MatrixDocs()
+    
+    def test_doc_fields(self):
+        # Try without frequency
+        self.assertEqual(
+            self.mxds.doc_fields(),
+            set(['id', 'class', 'terms'])
+        )
+
+    def test_is_valid_doc(self):
+        # Try without frequency
+        self.assertEqual(
+            self.mxds.is_valid_doc({
+                'id': '1',
+                'class': 'Spam',
+                'terms': ['a', 'b', 'c'],
+                'for_future_use': 'na'
+            }),
+            True
+        )
+        self.assertEqual(
+            self.mxds.is_valid_doc({
+                'docid': '1',
+                'class_name': 'Spam',
+                'terms': ['a', 'b', 'c'],
+                'for_future_use': 'na'
+            }),
+            False
+        )
+
+
 class TestMatrix(TestCase):
 
     def setUp(self):
