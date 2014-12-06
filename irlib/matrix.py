@@ -50,7 +50,14 @@ class MatrixDocs(list):
         except IndexError:
             self.append(doc)      
     
+    def shuffle(self):
+        random.shuffle(self)
 
+    def split(self):
+        split_point = len(self)/2
+        left  = MatrixDocs(self[:split_point]) 
+        right = MatrixDocs(self[split_point:]) 
+        return (left,right)
 
 
 class Matrix:
