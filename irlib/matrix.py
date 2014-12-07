@@ -309,7 +309,8 @@ class Matrix:
                 doc_terms=[], 
                 frequency=False, 
                 do_padding=False, 
-                unique_ids=False):
+                unique_ids=False,
+                meta_data={}):
         ''' Add new document to our matrix:
             doc_id: Identifier for the document, eg. file name, url, etc. 
             doc_class: You might need this in classification.
@@ -320,6 +321,7 @@ class Matrix:
             do_padding: Boolean. Check do_padding() for more info.
             unique_ids: When true, if two documents are added with same id,
                         then their terms are summed up into only one record.
+            meta_data: More fields to add to the document, for your own use.
         ''' 
         if not doc_terms:
             raise ValueError('doc_terms cannot be empty')
@@ -353,6 +355,9 @@ class Matrix:
             'class': doc_class, 
             'terms': my_doc_terms
         }
+
+        for key in meta_data:
+            doc_data[key] = meta_data[key]
 
         if unique_ids:
             self.docs.add_unique(doc_data)              

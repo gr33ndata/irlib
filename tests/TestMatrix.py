@@ -95,6 +95,21 @@ class TestMatrix(TestCase):
                             doc_class='Spam', 
                             doc_terms= doc1_terms)
 
+    def test_meta_data(self):
+        mx = Matrix()
+        for i,s in enumerate(['hello', 'how are you', 'fine thank you']):
+            mx.add_doc( doc_id = str(i), 
+                        doc_class='Email', 
+                        doc_terms= s.split(),
+                        do_padding=True,
+                        frequency=True,
+                        meta_data={
+                            'original_text': s,
+                            'original_text_len': len(s)
+                        })
+        self.assertEqual(mx.docs[0]['original_text'], 'hello')
+        self.assertEqual(mx.docs[0]['original_text_len'], 5)
+
     def test_docs_unique_ids(self):
         mx = Matrix()
         for i,s in enumerate(['hello', 'how are you', 'fine thank you']):
