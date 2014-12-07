@@ -304,8 +304,11 @@ class Matrix:
                     doc['terms'][idx] = tf
                     
                 
-    def add_doc(self, doc_id='', doc_class='', doc_terms=[], 
-                frequency=False, do_padding=False, 
+    def add_doc(self, doc_id='', 
+                doc_class='', 
+                doc_terms=[], 
+                frequency=False, 
+                do_padding=False, 
                 unique_ids=False):
         ''' Add new document to our matrix:
             doc_id: Identifier for the document, eg. file name, url, etc. 
@@ -344,15 +347,17 @@ class Matrix:
         if not my_doc_terms:
             zeros = [float(0)] * len(self.vocabulary())
             my_doc_terms = SuperList(zeros)
-             
+         
+        doc_data = {
+            'id': doc_id, 
+            'class': doc_class, 
+            'terms': my_doc_terms
+        }
+
         if unique_ids:
-            self.docs.add_unique({'id': doc_id, 
-                                  'class': doc_class, 
-                                  'terms': my_doc_terms})              
+            self.docs.add_unique(doc_data)              
         else:
-            self.docs.append({    'id': doc_id, 
-                                  'class': doc_class, 
-                                  'terms': my_doc_terms})
+            self.docs.append(doc_data)
 
         if do_padding: 
             self.do_padding()
