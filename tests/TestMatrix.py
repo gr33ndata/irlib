@@ -97,7 +97,7 @@ class TestMatrix(TestCase):
 
     def test_meta_data(self):
         mx = Matrix()
-        for i,s in enumerate(['hello', 'how are you', 'fine thank you']):
+        for i,s in enumerate(['hello', 'world']):
             mx.add_doc( doc_id = str(i), 
                         doc_class='Email', 
                         doc_terms= s.split(),
@@ -107,8 +107,8 @@ class TestMatrix(TestCase):
                             'original_text': s,
                             'original_text_len': len(s)
                         })
-        self.assertEqual(mx.docs[0]['original_text'], 'hello')
-        self.assertEqual(mx.docs[0]['original_text_len'], 5)
+        self.assertEqual(mx.docs[1]['original_text'], 'world')
+        self.assertEqual(mx.docs[1]['original_text_len'], 5)
 
     def test_docs_unique_ids(self):
         mx = Matrix()
