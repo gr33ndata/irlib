@@ -11,7 +11,6 @@ Included Preprocessors:
 # Author: Tarek Amr <@gr33ndata> 
 
 import re
-from aux import SuperList
 
 try:
 	import nltk as my_nltk
