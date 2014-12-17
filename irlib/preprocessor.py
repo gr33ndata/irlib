@@ -6,7 +6,6 @@ Included Preprocessors:
 * N-Gram Tokenizer
 * PoS Tagger (from NLTK)
 * Stemmer (from NLTK)
-* Cut off terms, with frequency less than min_freq
 '''
 
 # Author: Tarek Amr <@gr33ndata> 
