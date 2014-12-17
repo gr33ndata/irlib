@@ -77,6 +77,27 @@ class Preprocessor:
 	# Segment term into list of characters
 	def term2ch(self, term):
 		return [ch for ch in term]
+
+	@classmethod
+	def is_mention(cls, term):
+		return term.startswith('@')
+
+	@classmethod
+	def is_hashtag(cls, term):
+		return term.startswith('#')
+
+	@classmethod
+	def is_link(cls, term):
+		if term.startswith('http://'):
+			return True
+		elif term.startswith('https://'):
+			return True
+		elif term.startswith('www.'):
+			return True
+		else:
+			return False
+
+
     
 if __name__ == '__main__':
 

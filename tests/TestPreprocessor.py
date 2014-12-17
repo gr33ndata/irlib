@@ -44,3 +44,25 @@ class TestPreprocessor(TestCase):
         returned_tokens = p.ngram_tokenizer('how do you do?')
         expected_tokens = ['how do you', 'do you do']
         self.assertEqual(returned_tokens, expected_tokens)
+
+    def test_is_mention(self):
+        is_it = Preprocessor.is_mention('@twitter')
+        self.assertEqual(is_it, True)
+        is_it = Preprocessor.is_mention('#twitter')
+        self.assertEqual(is_it, False)
+
+    def test_is_hashtag(self):
+        is_it = Preprocessor.is_hashtag('@twitter')
+        self.assertEqual(is_it, False)
+        is_it = Preprocessor.is_hashtag('#twitter')
+        self.assertEqual(is_it, True)
+
+    def test_is_link(self):
+        is_it = Preprocessor.is_link('hello world')
+        self.assertEqual(is_it, False)
+        is_it = Preprocessor.is_link('http://www.yahoo.com')
+        self.assertEqual(is_it, True)
+        is_it = Preprocessor.is_link('https://www.yahoo.com')
+        self.assertEqual(is_it, True)
+        is_it = Preprocessor.is_link('www.yahoo.com')
+        self.assertEqual(is_it, True)
