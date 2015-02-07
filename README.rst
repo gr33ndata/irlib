@@ -308,6 +308,14 @@ In the following example we are going to implement a character-based LM.
                  This is useful for caliberation and testing. 
     # seen_unseen_count: Counts for seen/unseen terms in training data  
 
+Contribution
+-------------
+
+To contribute to *irlib*, first create an account on `github <http://github.com/>`_. Once this is done, fork the `irlib repository <http://github.com/gr33ndata/irlib>`_ to have you own repository,
+clone it using 'git clone' on the computers where you want to work. Make
+your changes in your clone, push them to your github account, test them
+on several computer, and when you are happy with them, send a pull
+request to the main repository.
 
 Testing
 --------
