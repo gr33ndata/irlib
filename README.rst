@@ -173,6 +173,19 @@ Supported file types are CSV (both comma or tab seperated) and ARFF (for using i
 
     mx.add_doc(doc_id = '42', doc_class='A', doc_terms=['the', 'apple', 'was', 'on', 'the', 'tree'])
 
+Load matrix from file
+----------------------
+
+If you have your matric saved into a CSV/TSV file, you can load it from there in the future. 
+
+* To load data from a CSV file::
+
+    mx = Matrix()
+    mx.load('filename.csv', delimiter='\t')
+
+We ignore black lists and white lists in this case, since we assume data was filtered before it being dumped in the first place. 
+
+Now you can deal with the matrix, just like the ones you built from scratch using add_doc() earlier. 
 
 How to use for classification
 ------------------------------

@@ -139,6 +139,23 @@ class Matrix:
                 line = line + delimiter + str(term) 
             fd.write('%s\n' % line)
         fd.close()
+
+    def load(self, filename, delimiter='\t', header=True):
+        ''' Loads matrix from CSV/TSV file
+        '''
+        with open(filename, 'r') as fd:
+            header_line = fd.readline()
+            header_data = header_line.strip().split(delimiter)
+            # First 2 columns are id and class
+            self.terms = SuperList(header_data[2:])
+            for line in fd.readlines():
+                doc_data = {
+                    'id': line[0], 
+                    'class': line[1], 
+                    'terms': SuperList(line[2:])
+                }
+                self.docs.append(doc_data)
+        fd.close()
     
     def dump_arff(self, filename, delimiter=',', clstype='NUMERIC'):
         ''' Dumps matrix to ARFF (Weka) file
