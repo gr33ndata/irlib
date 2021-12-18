@@ -1,3 +1,6 @@
+**Warning:** This code is about one decate old and was never maintained after. I build it for educational purpose and lots of the stuff here can be done more efficiently using Scikit-Learn and other libraries. You can check my book on Scikit-Learn here for more info, <https://github.com/PacktPublishing/Hands-On-Machine-Learning-with-scikit-learn-and-Scientific-Python-Toolkits>
+
+
 Information Retrieval Library 
 =============================
 
